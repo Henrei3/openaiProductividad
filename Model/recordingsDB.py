@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer
 from sqlalchemy.dialects.postgresql import JSONB, insert
-from base import Base
+from Model.base import Base
 
 
 class Recordings(Base):
