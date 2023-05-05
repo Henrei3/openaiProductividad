@@ -1,3 +1,5 @@
 .env
 processed_records
 analysed_records
+Pipfile
+Pipfile.lock
