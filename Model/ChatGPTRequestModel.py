@@ -3,6 +3,7 @@ from jsonCreator import JsonFileCreator
 from pathFinder import JSONFinder
 import os
 
+
 class ChatGPTRequestModel(RecordingModel):
     def __init__(self, system, raw_message, name):
         super.__init__(name)

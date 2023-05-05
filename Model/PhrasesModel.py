@@ -1,5 +1,4 @@
-import os
-from Controller.DataBaseController import DBController
+from Model.DataBase import SQLSERVERDBModel
 
 
 class EncouragedPhrasesModel:
@@ -7,7 +6,7 @@ class EncouragedPhrasesModel:
     encouraged = list()
 
     def __init__(self):
-        self.cnxn = DBController()
+        self.cnxn = SQLSERVERDBModel()
         phrases = self.cnxn.get_positive_phrases()
         for data in phrases:
             self.encouraged.append(
@@ -23,7 +22,7 @@ class ProhibitedPhrasesModel:
     prohibited = list()
 
     def __init__(self):
-        self.cnxn = DBController()
+        self.cnxn = SQLSERVERDBModel()
         phrases = self.cnxn.get_negative_phrases()
 
         for data in phrases:

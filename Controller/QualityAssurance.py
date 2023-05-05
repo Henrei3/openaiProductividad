@@ -1,11 +1,11 @@
 from Model.RecordingModel import RecordingModel
 from Model.AudioGPTRequestModel import AudioGPTRequestModel
-from Controller.DataBaseController import DBController
+from Model.DataBase import SQLSERVERDBModel
 from Controller.GPTCreator import OpenAIRequestCreator
 from Controller.PhrasesController import EncouragedPhrasesController
 from Controller.PhrasesController import ProhibitedPhrasesController
 
-controller = DBController()
+controller = SQLSERVERDBModel()
 
 prompt = "Cliente- Alo ? Agente- Buenos Dias. (Español)"
 

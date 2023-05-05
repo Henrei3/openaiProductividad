@@ -1,6 +1,7 @@
 from Model.Connexion import Connexion
 
-class DBController:
+
+class SQLSERVERDBModel:
 
     def __init__(self):
         self.cursor = Connexion().cursor()
@@ -29,3 +30,4 @@ class DBController:
         request = "select * from CCALIDAD_PALABRA"
         self.cursor.execute(request)
         return self.cursor.fetchall()
+
