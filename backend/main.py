@@ -3,7 +3,7 @@ from backend.Model.recordingsDB import Recordings, RecordingSchemaGet, \
     RecordingSchemaPost, Simple, SimpleSchemaPost, SimpleSchemaGet
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-
+from Controller.QualityAssurance import QualityAssurance
 app = Flask(__name__)
 CORS(app)
 
@@ -101,4 +101,11 @@ def add_simple():
     return jsonify(to_json_simple), 201
 
 
+@app.route("/QA", methods=["POST"])
+def execute_qa():
+    QualityAssurance.execute()
 
+
+@app.route("/QA")
+def get_all():
+    print("Not Yet Implemented")
