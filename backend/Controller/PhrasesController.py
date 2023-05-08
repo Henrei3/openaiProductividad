@@ -1,5 +1,5 @@
-from Model.PhrasesModel import EncouragedPhrasesModel
-from Model.PhrasesModel import ProhibitedPhrasesModel
+from backend.Model.PhrasesModel import EncouragedPhrasesModel
+from backend.Model.PhrasesModel import ProhibitedPhrasesModel
 
 
 class EncouragedPhrasesController:

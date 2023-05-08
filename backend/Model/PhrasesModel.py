@@ -1,4 +1,4 @@
-from Model.DataBase import SQLSERVERDBModel
+from backend.Model.DataBase import SQLSERVERDBModel
 
 
 class EncouragedPhrasesModel:

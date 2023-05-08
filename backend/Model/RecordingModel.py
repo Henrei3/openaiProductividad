@@ -1,7 +1,7 @@
-from Model.pathFinder import WavFinder
+from backend.Model.pathFinder import WavFinder
 import os
-from Model.jsonCreator import JsonFileCreator
-from Model.pathFinder import JSONFinder
+from backend.Model.jsonCreator import JsonFileCreator
+from backend.Model.pathFinder import JSONFinder
 
 
 class RecordingModel:

@@ -17,5 +17,3 @@ engine = create_engine(f'postgresql://{db_user}:{db_password}@{db_url}/{db_name}
 Session = sessionmaker(bind=engine)
 
 Base = sqlalchemy.orm.declarative_base()
-
-

@@ -1,6 +1,5 @@
 import openai
 from decouple import config
-from Model.AudioGPTRequestModel import AudioGPTRequestModel
 
 
 class OpenAIRequestCreator:

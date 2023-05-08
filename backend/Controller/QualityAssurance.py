@@ -1,9 +1,9 @@
-from Model.RecordingModel import RecordingModel
-from Model.AudioGPTRequestModel import AudioGPTRequestModel
-from Model.DataBase import SQLSERVERDBModel
-from Controller.GPTCreator import OpenAIRequestCreator
-from Controller.PhrasesController import EncouragedPhrasesController
-from Controller.PhrasesController import ProhibitedPhrasesController
+from backend.Model.RecordingModel import RecordingModel
+from backend.Model.AudioGPTRequestModel import AudioGPTRequestModel
+from backend.Model.DataBase import SQLSERVERDBModel
+from backend.Controller.GPTCreator import OpenAIRequestCreator
+from backend.Controller.PhrasesController import EncouragedPhrasesController
+from backend.Controller.PhrasesController import ProhibitedPhrasesController
 
 controller = SQLSERVERDBModel()
 

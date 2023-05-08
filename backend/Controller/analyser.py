@@ -1,6 +1,5 @@
-from Model.jsonCreator import JsonFileCreator
-from Model.PatternModel import PatternModel
-from Model.pathFinder import JSONFinder
+from backend.Model.PatternModel import PatternModel
+from backend.Model.pathFinder import JSONFinder
 
 class SpeechRefinement:
 

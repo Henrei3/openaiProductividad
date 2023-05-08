@@ -1,9 +1,9 @@
-from Model.pathFinder import WavFinder
-from Model.AudioGPTRequestModel import AudioGPTRequestModel
-from Model.ChatGPTRequestModel import ChatGPTRequestModel
-from Controller.GPTCreator import OpenAIRequestCreator
-from Controller.analyser import SpeechRefinement
-from Controller.analyser import PatternController
+from backend.Model.pathFinder import WavFinder
+from backend.Model.AudioGPTRequestModel import AudioGPTRequestModel
+from backend.Model.ChatGPTRequestModel import ChatGPTRequestModel
+from backend.Controller.GPTCreator import OpenAIRequestCreator
+from backend.Controller.analyser import SpeechRefinement
+from backend.Controller.analyser import PatternController
 from decouple import config
 import os
 

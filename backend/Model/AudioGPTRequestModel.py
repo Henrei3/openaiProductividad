@@ -1,7 +1,7 @@
-from Model.RecordingModel import RecordingModel
-from Model.jsonCreator import JsonFileCreator
-from Model.pathFinder import JSONFinder
-from Controller.analyser import SpeechRefinement
+from backend.Model.RecordingModel import RecordingModel
+from backend.Model.jsonCreator import JsonFileCreator
+from backend.Model.pathFinder import JSONFinder
+from backend.Controller.analyser import SpeechRefinement
 import os
 
 

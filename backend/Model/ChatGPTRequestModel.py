@@ -31,8 +31,8 @@ class ChatGPTRequestModel(RecordingModel):
         ]
 
     def set_response(self, response):
-        if not os.path.exists("../analysed_records/gptAnswer"):
-            os.makedirs("../analysed_records/gptAnswer")
+        if not os.path.exists("../backend/analysed_records/gptAnswer"):
+            os.makedirs("../backend/analysed_records/gptAnswer")
         JsonFileCreator.write_message(response, self.json_path)
 
     def get_response(self):

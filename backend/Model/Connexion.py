@@ -1,5 +1,5 @@
 import pyodbc
-from Model.Conf import Conf
+from backend.Model.Conf import Conf
 
 class Connexion:
     __cnxn = None

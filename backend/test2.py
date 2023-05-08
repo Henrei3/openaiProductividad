@@ -1,4 +1,4 @@
-from Model.recordingsDB import Simple, SimpleSchemaPost
+from backend.Model import Simple, SimpleSchemaPost
 import requests
 
 

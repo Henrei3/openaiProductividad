@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer
 from sqlalchemy.dialects.postgresql import JSONB
-from Model.base import Base
+from backend.Model.base import Base
 from marshmallow import Schema, fields
 
 

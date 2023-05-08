@@ -1,10 +1,11 @@
-from Model.base import Base, engine, Session
-from Model.recordingsDB import Recordings, RecordingSchemaGet, \
+from backend.Model.base import Base, engine, Session
+from backend.Model.recordingsDB import Recordings, RecordingSchemaGet, \
     RecordingSchemaPost, Simple, SimpleSchemaPost, SimpleSchemaGet
 from flask import Flask, jsonify, request
-import requests
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 Base.metadata.create_all(engine)
 
