@@ -48,3 +48,6 @@ class JSONFinder:
                     return json.loads(json_f.read())
         return -1
 
+# Vulnerabilidades :
+# 0 esta en todos los archivos
+# name in wav_name no es correcto. Tiene que ser un numero completo 10 digitos

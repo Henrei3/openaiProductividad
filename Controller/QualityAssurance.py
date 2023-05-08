@@ -9,7 +9,7 @@ controller = SQLSERVERDBModel()
 
 prompt = "Cliente- Alo ? Agente- Buenos Dias. (Español)"
 
-for line in controller.get_all_recordings_given_date('2023', '04', '26'):
+for line in controller.get_all_recordings_given_date('2023', '04', '27'):
     print(line)
     final_wav = RecordingModel.get_recording(str(line[3]), str(line[4]))
     print(final_wav)

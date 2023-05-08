@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer
-from sqlalchemy.dialects.postgresql import JSONB, insert
+from sqlalchemy.dialects.postgresql import JSONB
 from Model.base import Base
+from marshmallow import Schema, fields
 
 
 class Recordings(Base):
@@ -24,3 +25,37 @@ class Recordings(Base):
         self.patterns = patterns
         self.score = score
 
+
+class RecordingSchemaGet(Schema):
+    id = fields.Number()
+
+    audio_text = fields.Dict()
+    gpt_answer = fields.Dict()
+    patterns = fields.Dict()
+    score = fields.Dict()
+
+
+class RecordingSchemaPost(Schema):
+    audio_text = fields.Dict()
+    gpt_answer = fields.Dict()
+    patterns = fields.Dict()
+    score = fields.Dict()
+
+
+class Simple(Base):
+    __tablename__ = 'simple'
+
+    id = Column(Integer, primary_key=True)
+    num = Column(Integer)
+
+    def __init__(self, num):
+        self.num = num
+
+
+class SimpleSchemaPost(Schema):
+    num = fields.Number()
+
+
+class SimpleSchemaGet(Schema):
+    id = fields.Number()
+    num = fields.Number()

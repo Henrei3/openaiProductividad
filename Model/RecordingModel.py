@@ -17,25 +17,19 @@ class RecordingModel:
 
     @staticmethod
     def get_recording(phone_number, date):
+        if len(phone_number) > 10:
+            path = r"Y:\Apache24\htdocs\rec\grabaciones"
+            date = date.split(" ")
+            day = date[0]
+            hour = date[1]
+            for da in day.split("-"):
+                path += rf"\{da}"
+            wav_name = f"out-{phone_number}"
+            wav_finder = WavFinder(path)
 
-        path = r"Y:\Apache24\htdocs\rec\grabaciones"
-        date = date.split(" ")
-        day = date[0]
-        hour = date[1]
-        for da in day.split("-"):
-            path += rf"\{da}"
-        print(path)
-        wav_name = f"out-{phone_number}"
-        wav_finder = WavFinder(path)
-
-        record = wav_finder.find_wav(wav_name)
-        if record != -1:
-            record_hour = record[0].split("-")[4]
-            date = hour.split(":")
-            segment = record_hour[0]+record_hour[1]
-            if segment == date[0] and record_hour[2] == date[1][0]:
-                if os.stat(record[1]).st_size / (1024 * 1024) > 1:
-                    return record
+            record = wav_finder.find_wav(wav_name)
+            if record != -1:
+                return record
 
     def set_score(self, total, ticket_score):
         if not os.path.exists("../analysed_records/scores"):
