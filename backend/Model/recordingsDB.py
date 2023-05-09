@@ -1,61 +1,73 @@
-from sqlalchemy import Column, Integer
+from sqlalchemy import Integer, ForeignKey, Column
 from sqlalchemy.dialects.postgresql import JSONB
 from backend.Model.base import Base
 from marshmallow import Schema, fields
+from sqlalchemy.orm import Mapped, mapped_column
 
 
-class Recordings(Base):
+class Gestion(Base):
 
-    __tablename__ = 'recordings'
+    __tablename__ = 'gestion'
 
-    id = Column(Integer, primary_key=True)
-
-    audio_text = Column(JSONB)
-
-    gpt_answer = Column(JSONB)
-
-    patterns = Column(JSONB)
-
+    g_id = Column(Integer, primary_key=True)
     score = Column(JSONB)
 
-    def __init__(self, audio_text, gpt_answer, patterns, score):
-
-        self.audio_text = audio_text
-        self.gpt_answer = gpt_answer
-        self.patterns = patterns
+    def __init__(self, score):
         self.score = score
 
 
-class RecordingSchemaGet(Schema):
-    id = fields.Number()
-
-    audio_text = fields.Dict()
-    gpt_answer = fields.Dict()
-    patterns = fields.Dict()
+class GestionSchemaGet(Schema):
+    g_id = fields.Number()
     score = fields.Dict()
 
 
-class RecordingSchemaPost(Schema):
-    audio_text = fields.Dict()
-    gpt_answer = fields.Dict()
-    patterns = fields.Dict()
+class GestionSchemaPost(Schema):
     score = fields.Dict()
 
 
-class Simple(Base):
-    __tablename__ = 'simple'
+class PatronesExito(Base):
+    __tablename__ = "patronesexito"
 
-    id = Column(Integer, primary_key=True)
-    num = Column(Integer)
+    pe_id = Column(Integer, primary_key=True)
+    patterns = Column(JSONB)
 
-    def __init__(self, num):
-        self.num = num
-
-
-class SimpleSchemaPost(Schema):
-    num = fields.Number()
+    def __init__(self, patterns):
+        self.patterns = patterns
 
 
-class SimpleSchemaGet(Schema):
-    id = fields.Number()
-    num = fields.Number()
+class PatronesExitoPost(Schema):
+    patterns = fields.Dict()
+
+
+class PatronesExitoGet(Schema):
+    pe_id = fields.Number()
+    patterns = fields.Dict()
+
+
+class Audios(Base):
+    __tablename__ = 'audio'
+
+    audio_id = Column(Integer, primary_key=True)
+    audio_text = Column(JSONB)
+    gpt_answer = Column(JSONB)
+    gestion_id = Column(ForeignKey("gestion.g_id"))
+
+    def __init__(self, audio_text, gpt_answer, gestion_id):
+        self.audio_text = audio_text
+        self.gpt_answer = gpt_answer
+        self.gestion_id = gestion_id
+
+
+class AudiosSchemaPost(Schema):
+    audio_text = fields.Dict()
+    gpt_answer = fields.Dict()
+    gestion_id = fields.Number()
+
+
+class AudiosSchemaGet(Schema):
+    audio_id = fields.Number()
+    audio_text = fields.Dict()
+    gpt_answer = fields.Dict()
+    gestion_id = fields.Number()
+
+

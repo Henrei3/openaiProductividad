@@ -1,4 +1,4 @@
-export class Recordings {
+export class Gestion {
   constructor(
         public id ? : Number,
         public audio_text? : JSON,

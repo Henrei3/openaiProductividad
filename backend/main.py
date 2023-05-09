@@ -1,9 +1,10 @@
 from backend.Model.base import Base, engine, Session
-from backend.Model.recordingsDB import Recordings, RecordingSchemaGet, \
-    RecordingSchemaPost, Simple, SimpleSchemaPost, SimpleSchemaGet
+from backend.Model.recordingsDB import Gestion, GestionSchemaGet, \
+    GestionSchemaPost, AudiosSchemaPost, AudiosSchemaGet
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from Controller.QualityAssurance import QualityAssurance
+
 app = Flask(__name__)
 CORS(app)
 
@@ -14,9 +15,9 @@ Base.metadata.create_all(engine)
 def get_recordings():
     session = Session()
 
-    recording_objects = session.query(Recordings).all()
+    recording_objects = session.query(Gestion).all()
 
-    schema = RecordingSchemaGet(many=True)
+    schema = GestionSchemaGet(many=True)
 
     records = schema.dump(recording_objects)
 
@@ -28,21 +29,22 @@ def get_recordings():
 @app.route('/records', methods=['POST'])
 def add_recording():
     print(request.get_json())
-    posted_record = RecordingSchemaPost().load(request.get_json())
+    posted_record = GestionSchemaPost().load(request.get_json())
 
     print(posted_record)
 
-    record = Recordings(**posted_record.data)
+    record = Gestion(**posted_record.data)
 
     session = Session()
     session.add(record)
     session.commit()
 
-    to_json_record = RecordingSchemaPost().dump(record).data
+    to_json_record = GestionSchemaPost().dump(record).data
     session.close()
     return jsonify(to_json_record), 201
 
 
+"""
 @app.route('/config_simple')
 def config():
     session = Session()
@@ -56,7 +58,7 @@ def config():
         samples = session.query(Simple).all()
     print(list(samples))
 
-    schema = SimpleSchemaPost(many=True)
+    schema = AudiosSchemaPost(many=True)
 
     to_json = schema.dump(samples)
 
@@ -71,7 +73,7 @@ def get_simple():
 
     simple_objects = sess.query(Simple).all()
 
-    schema = SimpleSchemaGet(many=True)
+    schema = AudiosSchemaGet(many=True)
 
     samples = schema.dump(simple_objects)
 
@@ -83,7 +85,7 @@ def get_simple():
 @app.route('/simple', methods=['POST'])
 def add_simple():
     print("test")
-    posted_simple = SimpleSchemaPost().load(request.get_json())
+    posted_simple = AudiosSchemaPost().load(request.get_json())
 
     print(posted_simple)
 
@@ -93,12 +95,13 @@ def add_simple():
     session.add(simple)
     session.commit()
 
-    to_json_simple = SimpleSchemaPost().dump(simple)
+    to_json_simple = AudiosSchemaPost().dump(simple)
 
     print(to_json_simple)
     session.close()
 
     return jsonify(to_json_simple), 201
+"""
 
 
 @app.route("/QA", methods=["POST"])

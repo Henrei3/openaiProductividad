@@ -8,8 +8,8 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 
 
-import { Recordings } from "./recordings.model";
- 
+import { Gestion } from "./recordings.model";
+
 @Injectable()
 export class RecordingsApiService{
     constructor(private http:HttpClient){}
@@ -28,10 +28,10 @@ export class RecordingsApiService{
         return throwError(() => new Error('Something bad happened; please try again later.'));
       }
 
-    get_Records(): Observable<Recordings[]> {
-        
+    get_Records(): Observable<Gestion[]> {
+
         return this.http
-      .get<Recordings[]>(`${API_URL}/records`)
+      .get<Gestion[]>(`${API_URL}/records`)
       .pipe(
         catchError(this._handleError)
       );

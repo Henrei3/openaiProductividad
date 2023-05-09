@@ -1,6 +1,7 @@
 import pyodbc
 from backend.Model.Conf import Conf
 
+
 class Connexion:
     __cnxn = None
 
