@@ -1,5 +1,5 @@
 from backend.Model.PatternModel import PatternModel
-from backend.Model.pathFinder import JSONFinder
+from backend.Controller.pathFinder import JSONFinder
 
 class SpeechRefinement:
 
@@ -12,7 +12,7 @@ class SpeechRefinement:
     @staticmethod
     def refine_speech_textOpenAI(speech):
 
-        text = speech.replace("Agente 1-", "-")
+        text = speech.replace("Agente 1-", "-").replace("Agente-", "-")
         return text
 
 

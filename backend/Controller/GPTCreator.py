@@ -1,6 +1,6 @@
 import openai
 from decouple import config
-
+from backend.Model.ChatGPTRequestModel import ChatGPTRequestModel
 
 class OpenAIRequestCreator:
 
@@ -20,16 +20,16 @@ class OpenAIRequestCreator:
         return response["text"]
 
     @staticmethod
-    def chat_request(gptModel):
+    def chat_request(gpt_model: ChatGPTRequestModel):
 
         APIKEY = config('whisper')
-        messages = gptModel.get_message()
+        messages = gpt_model.get_message()
 
         response = openai.ChatCompletion.create(
             api_key=APIKEY,
             model="gpt-3.5-turbo",
             temperature=0.7,
-            max_tokens=300,
+            max_tokens=2000,
             messages=messages
         )
 

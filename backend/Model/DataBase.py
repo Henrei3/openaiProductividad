@@ -31,3 +31,11 @@ class SQLSERVERDBModel:
         self.cursor.execute(request)
         return self.cursor.fetchall()
 
+    def test(self):
+        requests = "select id_gestion, accion_ges, respuesta_ges, telefono_ges, fecha_ges, cedente, serial_ced \
+                   from CEDENTE a \
+                   inner join GESTIONES b  on a.nombre_ced=b.cedente \
+                   where tipo_ges = 1 and convert(date,fecha_ges,120)=convert(date,'2023-04-27',120) \
+                   and telefono_ges='0980427196' "
+        self.cursor.execute(requests)
+        return self.cursor.fetchall()

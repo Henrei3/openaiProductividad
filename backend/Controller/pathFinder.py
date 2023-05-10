@@ -1,5 +1,7 @@
 from pathlib import WindowsPath
 import json
+from backend.Model.wav import Wav
+import time
 
 
 class WavFinder:
@@ -11,23 +13,21 @@ class WavFinder:
     def find_all(self):
         wavs = []
         for wav in self.path.rglob("*.wav"):
-            wavs.append([wav.stem, str(wav)])
+            wavs.append(Wav(wav.stem[0:14], str(wav)))
         return wavs
 
     def find_wav(self, name):
         for wav in self.find_all():
-            if name in wav[0]:
+            if name in wav.name:
                 return wav
-        print("Not Found")
         return -1
 
     def find_wavs(self, name):
         wavs = list()
         for wav in self.find_all():
-            if name in wav[0]:
+            if name in wav.name:
                 wavs.append(wav)
         return wavs
-
 
 
 class JSONFinder:

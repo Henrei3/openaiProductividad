@@ -5,14 +5,11 @@ from backend.Model.PhrasesModel import ProhibitedPhrasesModel
 class EncouragedPhrasesController:
 
     @staticmethod
-    def calculate_score(open_text):
-        text = open_text.upper()
-        overall_score = 0
+    def calculate_score(phrases_model: EncouragedPhrasesModel):
+        text = phrases_model.phrase
+        phrases = phrases_model.encouraged
 
-        phrases_model = EncouragedPhrasesModel()
-        phrases = phrases_model.get_encouraged_list()
-
-        management_score = list()
+        overall_score, management_score = phrases_model.get_phrase_score()
 
         for ticket in phrases:
             management_score.append({
@@ -36,7 +33,7 @@ class ProhibitedPhrasesController:
         negative_score = 0
 
         phrases_model = ProhibitedPhrasesModel()
-        phrases = phrases_model.get_prohibiited_phrases()
+        phrases = phrases_model.get_prohibited_phrases()
 
         for nonoword in phrases:
             if nonoword[0].lower() in text:

@@ -1,4 +1,4 @@
-from backend.Model.pathFinder import WavFinder
+from backend.Controller.pathFinder import WavFinder
 from backend.Model.AudioGPTRequestModel import AudioGPTRequestModel
 from backend.Model.ChatGPTRequestModel import ChatGPTRequestModel
 from backend.Controller.GPTCreator import OpenAIRequestCreator

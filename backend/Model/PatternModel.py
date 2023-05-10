@@ -1,7 +1,7 @@
 import os.path
 
 from backend.Model.jsonCreator import JsonFileCreator
-from backend.Model.pathFinder import JSONFinder
+from backend.Controller.pathFinder import JSONFinder
 
 
 class PatternModel:
