@@ -35,7 +35,7 @@ class AudioGPTRequestModel(RecordingModel):
     def get_response(self):
         json_finder = JSONFinder("../analysed_records/audio_text/")
         json = json_finder.find(self.name + "-" + str(self.nb_responses))
-        return SpeechRefinement.refine_speech_textOpenAI(json["text"])
+        return json["text"]
 
     def set_response(self, response):
         if not os.path.exists("../analysed_records/audio_text"):

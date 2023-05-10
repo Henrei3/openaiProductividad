@@ -1,6 +1,7 @@
 from backend.Model.PatternModel import PatternModel
 from backend.Controller.pathFinder import JSONFinder
 
+
 class SpeechRefinement:
 
     @staticmethod
@@ -14,6 +15,30 @@ class SpeechRefinement:
 
         text = speech.replace("Agente 1-", "-").replace("Agente-", "-")
         return text
+
+    @staticmethod
+    def get_only_agent(speech):
+        saludo = ""
+        start = False
+        toggle = False
+        refined_speech = ""
+        for character in speech:
+            if character == "-":
+                if toggle:
+                    toggle = False
+                else:
+                    toggle = True
+            if not start:
+                saludo += character
+                if saludo in "Buenos Dias":
+                    if "Buenos Dias" in saludo:
+                        start = True
+                else:
+                    saludo = ""
+
+            if toggle and character != "-" and start:
+                refined_speech += character
+        return refined_speech
 
 
 class PatternController:

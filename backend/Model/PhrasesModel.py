@@ -49,7 +49,8 @@ class ProhibitedPhrasesModel:
 
     prohibited = list()
 
-    def __init__(self):
+    def __init__(self, text):
+        self.phrase = text
         self.cnxn = SQLSERVERDBModel()
         phrases = self.cnxn.get_negative_phrases()
 
