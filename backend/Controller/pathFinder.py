@@ -1,3 +1,4 @@
+import typing
 from pathlib import WindowsPath
 import json
 from backend.Model.wav import Wav
@@ -13,7 +14,8 @@ class WavFinder:
     def find_all(self):
         wavs = []
         for wav in self.path.rglob("*.wav"):
-            wavs.append(Wav(wav.stem[0:14], str(wav)))
+
+            wavs.append(Wav(wav.stem[:-4], str(wav)))
         return wavs
 
     def find_wav(self, name):
@@ -22,7 +24,7 @@ class WavFinder:
                 return wav
         return -1
 
-    def find_wavs(self, name):
+    def find_wavs(self, name) -> typing.List[Wav]:
         wavs = list()
         for wav in self.find_all():
             if name in wav.name:
@@ -55,6 +57,18 @@ class JSONFinder:
                     return json.loads(json_f.read())
         return -1
 
-# Vulnerabilidades :
-# 0 esta en todos los archivos
-# name in wav_name no es correcto. Tiene que ser un numero completo 10 digitos
+    def findAll_given_name(self, name):
+        jsons = list()
+        for json_file in self.path.rglob("*.json"):
+            if name in str(json_file):
+                with open(str(json_file)) as json_o:
+                    jsons.append(json.loads(json_o.read()))
+        return jsons
+
+    def findAll_plus_name(self):
+        jsons = []
+        for json_path in self.path.rglob("*.json"):
+            with open(str(json_path), "r") as json_file:
+                json_object = json.loads(json_file.read())
+                jsons.append([str(json_path)[-53:-5], json_object])
+        return jsons

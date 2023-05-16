@@ -1,4 +1,4 @@
-from sqlalchemy import Integer, ForeignKey, Column
+from sqlalchemy import Integer, String, ForeignKey, Column
 from sqlalchemy.dialects.postgresql import JSONB
 from backend.Model.base import Base
 from marshmallow import Schema, fields
@@ -9,20 +9,51 @@ class Gestion(Base):
 
     __tablename__ = 'gestion'
 
-    g_id = Column(Integer, primary_key=True)
-    score = Column(JSONB)
+    id = Column(Integer, primary_key=True)
+    g_id = Column(Integer)
+    cellphone = Column(Integer)
 
-    def __init__(self, score):
-        self.score = score
+    def __init__(self, g_id, cellphone):
+        self.g_id = g_id
+        self.cellphone = cellphone
 
 
 class GestionSchemaGet(Schema):
     g_id = fields.Number()
-    score = fields.Dict()
 
 
 class GestionSchemaPost(Schema):
+    audio_text = fields.Dict()
+
+
+class Contenido(Base):
+    __tablename__ = "contenido"
+
+    g_id = Column(ForeignKey("gestion.id"), primary_key=True)
+    name = Column(String)
+    audio_text = Column(JSONB)
+    score = Column(JSONB)
+    gpt_answer = Column(JSONB)
+
+    def __init__(self, g_id, name, audio_text, score, gpt_answer):
+        self.g_id = g_id
+        self.name = name
+        self.audio_text = audio_text
+        self.score = score
+        self.gpt_answer = gpt_answer
+
+
+class ContenidoSchemaPost(Schema):
+    nombre = fields.String()
+    audio_text = fields.Dict()
     score = fields.Dict()
+    gpt_answer = fields.Dict()
+
+
+class ContenidoSchemaGet(Schema):
+    audio_text = fields.Dict()
+    score = fields.Dict()
+    gpt_answer = fields.Dict()
 
 
 class PatronesExito(Base):
@@ -44,30 +75,5 @@ class PatronesExitoGet(Schema):
     patterns = fields.Dict()
 
 
-class Audios(Base):
-    __tablename__ = 'audio'
-
-    audio_id = Column(Integer, primary_key=True)
-    audio_text = Column(JSONB)
-    gpt_answer = Column(JSONB)
-    gestion_id = Column(ForeignKey("gestion.g_id"))
-
-    def __init__(self, audio_text, gpt_answer, gestion_id):
-        self.audio_text = audio_text
-        self.gpt_answer = gpt_answer
-        self.gestion_id = gestion_id
-
-
-class AudiosSchemaPost(Schema):
-    audio_text = fields.Dict()
-    gpt_answer = fields.Dict()
-    gestion_id = fields.Number()
-
-
-class AudiosSchemaGet(Schema):
-    audio_id = fields.Number()
-    audio_text = fields.Dict()
-    gpt_answer = fields.Dict()
-    gestion_id = fields.Number()
 
 

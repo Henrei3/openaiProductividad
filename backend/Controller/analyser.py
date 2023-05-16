@@ -18,8 +18,6 @@ class SpeechRefinement:
 
     @staticmethod
     def get_only_agent(speech):
-        saludo = ""
-        start = False
         toggle = False
         refined_speech = ""
         for character in speech:
@@ -28,15 +26,8 @@ class SpeechRefinement:
                     toggle = False
                 else:
                     toggle = True
-            if not start:
-                saludo += character
-                if saludo in "Buenos Dias":
-                    if "Buenos Dias" in saludo:
-                        start = True
-                else:
-                    saludo = ""
 
-            if toggle and character != "-" and start:
+            if toggle and character != "-":
                 refined_speech += character
         return refined_speech
 
