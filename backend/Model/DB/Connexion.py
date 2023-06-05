@@ -1,5 +1,5 @@
 import pyodbc
-from backend.Model.Conf import Conf
+from backend.Model.DB.Conf import Conf
 
 
 class Connexion:

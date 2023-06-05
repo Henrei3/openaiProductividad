@@ -1,4 +1,4 @@
-from backend.Model.DataBase import SQLSERVERDBModel
+from backend.Model.DB.SQLServer import SQLSERVERDBModel
 from backend.Controller.pathFinder import JSONFinder
 from backend.Controller.analyser import SpeechRefinement
 

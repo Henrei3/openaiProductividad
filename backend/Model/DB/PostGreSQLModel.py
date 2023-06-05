@@ -1,5 +1,5 @@
-from backend.Model.recordingsDB import Gestion, PatronesExito, Contenido
-from backend.Model.base import Session
+from backend.Model.DB.recordingsDB import Gestion, Contenido
+from backend.Model.DB.base import Session
 from typing import Optional
 
 

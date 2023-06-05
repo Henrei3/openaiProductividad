@@ -1,8 +1,7 @@
 from sqlalchemy import Integer, String, ForeignKey, Column
 from sqlalchemy.dialects.postgresql import JSONB
-from backend.Model.base import Base
+from backend.Model.DB.base import Base
 from marshmallow import Schema, fields
-from sqlalchemy.orm import Mapped, mapped_column
 
 
 class Gestion(Base):

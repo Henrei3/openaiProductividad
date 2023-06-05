@@ -1,19 +1,14 @@
-import requests
-from Model.base import engine, Session
-from Model.recordingsDB import Base, Gestion, PatronesExito, Contenido
+from backend.Model.DB.base import engine, Session
+from backend.Model.DB.recordingsDB import Base, Gestion, PatronesExito, Contenido
 from sqlalchemy import text
-from backend.Controller.pathFinder import JSONFinder
 from backend.Model.RecordingModel import RecordingModel
-from backend.Model.AudioGPTRequestModel import AudioGPTRequestModel
-from backend.Model.DataBase import SQLSERVERDBModel
-from backend.Controller.GPTCreator import OpenAIRequestCreator
+from backend.Model.DB.SQLServer import SQLSERVERDBModel
 from backend.Controller.PhrasesController import EncouragedPhrasesController
 from backend.Controller.PhrasesController import ProhibitedPhrasesController
 from backend.Model.PhrasesModel import EncouragedPhrasesModel, ProhibitedPhrasesModel
 from backend.Controller.analyser import SpeechRefinement
 from backend.Controller.pathFinder import JSONFinder
 from backend.Controller.PossibleWav import PossibleWav
-import subprocess
 
 
 class FlaskTesting:

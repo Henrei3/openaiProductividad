@@ -1,4 +1,4 @@
-from backend.Model.PostGreSQLModel import PostGre
+from backend.Model.DB.PostGreSQLModel import PostGre
 from backend.Controller.pathFinder import JSONFinder
 
 

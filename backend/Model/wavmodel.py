@@ -1,4 +1,4 @@
-class Wav:
+class WavModel:
 
     def __init__(self, name, path):
         self.name = name

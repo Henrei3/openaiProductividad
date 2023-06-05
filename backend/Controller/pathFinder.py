@@ -1,7 +1,7 @@
 import typing
 from pathlib import WindowsPath
 import json
-from backend.Model.wav import Wav
+from backend.Model.wavmodel import WavModel
 import time
 
 
@@ -15,7 +15,7 @@ class WavFinder:
         wavs = []
         for wav in self.path.rglob("*.wav"):
 
-            wavs.append(Wav(wav.stem[:-4], str(wav)))
+            wavs.append(WavModel(wav.stem[:-4], str(wav)))
         return wavs
 
     def find_wav(self, name):
@@ -24,7 +24,7 @@ class WavFinder:
                 return wav
         return -1
 
-    def find_wavs(self, name) -> typing.List[Wav]:
+    def find_wavs(self, name) -> typing.List[WavModel]:
         wavs = list()
         for wav in self.find_all():
             if name in wav.name:

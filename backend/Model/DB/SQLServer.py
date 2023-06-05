@@ -1,6 +1,5 @@
-from backend.Model.Connexion import Connexion
+from backend.Model.DB.Connexion import Connexion
 from pyodbc import ProgrammingError
-from backend.Controller.pathFinder import JSONFinder
 
 
 class SQLSERVERDBModel:

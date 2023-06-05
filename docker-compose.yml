@@ -1,0 +1,18 @@
+services:
+  frontend:
+    image: frontend/angle
+    build: ./frontend
+  backend:
+    image: backend/python_program
+    build: ./backend
+
+  postgresdb:
+      image: postgres
+      restart: always
+
+      environment:
+        POSTGRES_USER: usr
+        POSTGRES_PASSWORD: pass
+        POSTGRES_DB: ANALYSED
+      ports:
+        - 5432:5432
