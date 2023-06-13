@@ -1,5 +1,6 @@
 from backend.Model.DB.recordingsDB import Gestion, Contenido
 from backend.Model.DB.base import Session
+from sqlalchemy import text
 from typing import Optional
 
 
@@ -18,9 +19,15 @@ class PostGre:
         self._add(contenido)
         return contenido
 
+    def get_contenido(self, y, m, d):
+        return self.custom_requete(f"SELECT * FROM contenido where name like '%{y}{m}{d}%'")
+
     def _add(self, value):
         self.session.add(value)
         self.session.commit()
 
     def close(self):
         self.session.close()
+
+    def custom_requete(self, requete:str):
+        return self.session.execute(text(requete))

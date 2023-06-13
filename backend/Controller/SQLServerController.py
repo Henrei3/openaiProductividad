@@ -2,7 +2,8 @@ from backend.Model.DB.SQLServer import SQLSERVERDBModel
 from backend.Controller.pathFinder import JSONFinder
 from backend.Controller.analyser import SpeechRefinement
 
-class SQLServerDataBaseController:
+
+class SQLServerController:
     @staticmethod
     def add_qa_processes(id_grabacion, nombre, scores):
         server = SQLSERVERDBModel()

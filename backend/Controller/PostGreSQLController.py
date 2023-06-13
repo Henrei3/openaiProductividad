@@ -16,3 +16,9 @@ class PostgreController:
         postgre.add_contenido(gestion.id, name, audio, score, None)
 
         postgre.close()
+
+    @staticmethod
+    def get_pa_processes(y, m, d):
+        postgre = PostGre()
+        return postgre.get_contenido(y, m, d)
+

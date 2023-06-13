@@ -1,0 +1,30 @@
+div div {
+    margin: 2rem;
+}
+div.button{
+    display: flex;
+    flex-direction: row;
+}
+div.button a{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 4.5em;
+    width: 9.5em;
+    background-color: #1da6f0;
+    color: white;
+    text-decoration: none;
+    margin: 0em 2em;
+}
+
+div.button a:nth-child(even){
+    background-color: #ffa033;
+}
+
+a:hover{
+    opacity: 0.8;
+}
+.home{
+    display: flex;    
+    flex-direction: column;    
+}

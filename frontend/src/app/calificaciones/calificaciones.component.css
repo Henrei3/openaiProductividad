@@ -1,0 +1,22 @@
+h2{
+    padding: 0em 2em;
+    color: #1da6f0;
+    text-decoration: underline #2C4D58;
+}
+
+div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+div a{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+    width: 160px;
+    background-color: #ffa033;
+    color: white;
+    font-size: x-large;
+}

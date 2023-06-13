@@ -4,18 +4,25 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
-import { RecordingsApiService } from './recordings/recordings-api.service';
+import { CalificacionesComponent } from './calificaciones/calificaciones.component';
+import { HomeComponent } from './home/home.component';
+import { CalificacionesGrupoComponent } from './calificaciones-grupo/calificaciones-grupo.component';
+import { WorkInProgressComponent } from './work-in-progress/work-in-progress.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    CalificacionesComponent,
+    HomeComponent,
+    CalificacionesGrupoComponent,
+    WorkInProgressComponent
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     AppRoutingModule
   ],
-  providers: [RecordingsApiService],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

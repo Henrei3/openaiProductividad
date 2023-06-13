@@ -1,6 +1,6 @@
 from backend.Model.DB.base import Base, engine
 
-from flask import Flask
+from flask import Flask,request
 from flask_cors import CORS
 from backend.Controller.QualityAssurance import QualityAssurance
 
@@ -10,14 +10,18 @@ CORS(app)
 Base.metadata.create_all(engine)
 
 
-@app.route('/records')
+@app.route('/records', methods=["GET"])
 def get_recordings():
-    print(" ")
+    print(" Get Signal received ")
+    return "Signal Received"
 
 
 @app.route('/records', methods=['POST'])
 def add_recording():
-    print("")
+    for val in request.values:
+        print(val)
+
+    return QualityAssurance.await_test()
 
 
 @app.route("/QA", methods=["POST"])

@@ -7,8 +7,8 @@ class SQLSERVERDBModel:
     def __init__(self):
         self.cursor = Connexion().cursor()
 
-    def get_all_recordings_given_date(self, a, m, d):
-        requete = f"select id_gestion, accion_ges, respuesta_ges, telefono_ges, fecha_ges, cedente, serial_ced from CEDENTE a inner join GESTIONES b  on a.nombre_ced=b.cedente where tipo_ges = 1 and convert(date,fecha_ges,120)=convert(date,'{a}-{m}-{d}',120)"
+    def get_all_recordings_given_date(self, y, m, d):
+        requete = f"select id_gestion, accion_ges, respuesta_ges, telefono_ges, fecha_ges, cedente, serial_ced from CEDENTE a inner join GESTIONES b  on a.nombre_ced=b.cedente where tipo_ges = 1 and convert(date,fecha_ges,120)=convert(date,'{y}-{m}-{d}',120)"
         self.cursor.execute(
             requete
         )

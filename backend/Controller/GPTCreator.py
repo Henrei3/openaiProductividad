@@ -1,6 +1,7 @@
 import openai
 from decouple import config
-from backend.Model.ChatGPTRequestModel import ChatGPTRequestModel
+from backend.Model.RequestModel import ChatGPTRequestModel
+
 
 class OpenAIRequestCreator:
 
