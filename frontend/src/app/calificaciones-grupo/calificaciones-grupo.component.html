@@ -1,4 +1,4 @@
-<menu class="no-data">
+<div class="no-data">
     <h1>Calificaciones</h1>
     <p>Añada la fecha de las grabaciones</p>
     <p>que quisiera analizar</p>
@@ -8,6 +8,9 @@
         <input type="text" maxlength="2">;
         <input type="text" maxLength="2">
     </div></span>
-</menu>
+</div>
+
 <div class="calificaciones">
+    <a (click)="showScore(score.name)" *ngFor="let score of scores"> {{score.name}} </a>
+    
 </div>

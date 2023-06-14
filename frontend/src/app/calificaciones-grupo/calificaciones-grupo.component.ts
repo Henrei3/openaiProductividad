@@ -1,6 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import axios from 'axios'
 import { BackendService} from '../backend-service.service';
+import { Router } from '@angular/router';
+import { AbstractFormGroupDirective } from '@angular/forms';
+import { AppComponent } from '../app.component';
+import { DataService } from '../data.service';
+import { Score } from '../scores/scores.model';
 
 
 @Component({
@@ -8,22 +13,13 @@ import { BackendService} from '../backend-service.service';
   templateUrl: './calificaciones-grupo.component.html',
   styleUrls: ['./calificaciones-grupo.component.css']
 })
-export class CalificacionesGrupoComponent implements OnInit{
-  constructor(private scoreCalculs : BackendService){}
 
-  getScores(){
-    this.scoreCalculs.executeScoreCalculations()
-    .then((response)=>{
-      console.log(response)
-      console.log(response.data)    
-      let variable = Object.keys(response.data)
-      console.log(response.data[variable[0]])
-    }
-    ).catch(()=>{
-      console.error()
-    } 
-    )
-  }
+export class CalificacionesGrupoComponent implements OnInit{
+
+  scores: Score[]= [];
+
+  constructor(private scoreCalculs : BackendService, private dataService: DataService, private route: Router){}
+
   ngOnInit(){
     let dateSelector = document.getElementsByTagName("input")
  
@@ -39,10 +35,43 @@ export class CalificacionesGrupoComponent implements OnInit{
       if(i == dateSelector.length-1 && e.key=="Enter"){
         console.log("calculating...")
         this.getScores()
-        console.log("done")
       }
       })
     }
+  }
+  
+  showScore(name:any ){
+    for(let i=0; i<this.scores.length; i++){
+      if(this.scores[i].name == name) this.dataService.sendData(this.scores[i])
+    }
+    this.route.navigate(['/calificacion'])
+  }
+
+  getScores(){
+    this.scoreCalculs.executeScoreCalculations()
+    .then((response)=>{    
+      let variable = Object.keys(response.data)
+    
+      for (let i=0; i < variable.length; i++){
+        let name = variable[i]  
+        
+        let total = response.data[name][1]["total"]
+        
+        let ticket_score = response.data[name][1]["ticket_score"]
+        
+        let audio_text = response.data[name][0]["text"]
+        
+        let score = new Score(name,total,ticket_score,audio_text)
+        
+        this.scores.push(score)
+      }
+      
+    }
+
+    ).catch((err)=>{
+      console.error(err)
+    } 
+    )
   }
 }
 

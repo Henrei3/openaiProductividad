@@ -1,31 +1,25 @@
-import { Component,OnInit,OnDestroy } from '@angular/core';
+import { Component,Input} from '@angular/core';
 import { Subscription } from 'rxjs';
-import { Gestion } from './recordings/recordings.model';
+import { Score } from './scores/scores.model';
+import { BackendService } from './backend-service.service';
+import { DataService } from './data.service';
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit,OnDestroy{
+export class AppComponent {
   title = 'frontend';
-
-  recordListSubs!: Subscription;
-  recordLists!: Gestion[]
-
-
-
-  ngOnInit(): void {
-    const obsArgument = {
-      next: (solution: Gestion[]) => {
-        this.recordLists = solution
-        console.log(solution)
-        console.log("test")
-      },
-      error: (err : Error) => console.error('Observer got an error : ' + err)
-    }
-
-  }
-  ngOnDestroy(): void {
-      this.recordListSubs.unsubscribe()
+  
+  dataPassed :any;
+  subsciption?: Subscription;
+  
+  constructor(private data_service:DataService){
+    this.subsciption = this.data_service.data$.subscribe(scores => {
+    this.data_service.sendData(scores);
+    this.dataPassed = scores;  
+    });
+  
   }
 }

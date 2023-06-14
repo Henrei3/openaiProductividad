@@ -1,19 +1,24 @@
-<h2>Calificaciones</h2>
+<h2 (click)="return()" >Calificaciones</h2>
 
-<span><div> calificacion Numero ? </div></span>
+<span><div> {{score?.name}} </div></span>
 
 <div>
 
-    <a href="#">
+    <a (click)="showTotal()">
         Total 
     </a>
 
-    <a href="#">
+    <a (click)="showTickets()">
         Etiquetas
     </a>
 
-    <a href="#">
+    <a (click)="showAudio()">
         Audio
     </a>
 
+</div>
+<div>
+    {{audio}}
+    {{tickets}}
+    {{total}}
 </div>

@@ -8,6 +8,7 @@ import { CalificacionesComponent } from './calificaciones/calificaciones.compone
 import { HomeComponent } from './home/home.component';
 import { CalificacionesGrupoComponent } from './calificaciones-grupo/calificaciones-grupo.component';
 import { WorkInProgressComponent } from './work-in-progress/work-in-progress.component';
+import { DataService } from './data.service';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,7 @@ import { WorkInProgressComponent } from './work-in-progress/work-in-progress.com
     HttpClientModule,
     AppRoutingModule
   ],
-  providers: [],
+  providers: [DataService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
