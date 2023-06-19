@@ -36,6 +36,8 @@ class EncouragedPhrasesModel(PhrasesModel):
         PhrasesModel.__init__(self, phrase)
         self.cnxn = SQLSERVERDBModel()
         element = self.cnxn.get_serialced_fromname(cedente)
+        if element is None:
+            self.cnxn.add_cedente_general()
         phrases = self.cnxn.get_positive_phrases(element[0])
         for data in phrases:
             self.encouraged.append(
@@ -67,5 +69,3 @@ class ProhibitedPhrasesModel:
 
     def get_prohibited_phrases(self):
         return self.prohibited
-
-

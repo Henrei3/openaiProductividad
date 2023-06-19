@@ -1,5 +1,5 @@
 from backend.Model.DB.recordingsDB import Gestion, Contenido
-from backend.Model.DB.base import Session
+from backend.Model.DB.base import Session, Base, engine
 from sqlalchemy import text
 from typing import Optional
 
@@ -8,6 +8,7 @@ class PostGre:
 
     def __init__(self):
         self.session = Session()
+        Base.metadata.create_all(engine)
 
     def add_gestion(self, gestion_id: str, cellphone: str):
         gestion = Gestion(gestion_id, cellphone)

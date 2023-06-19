@@ -7,7 +7,7 @@ class SQLSERVERDBModel:
     def __init__(self):
         self.cursor = Connexion().cursor()
 
-    def get_all_recordings_given_date(self, y, m, d):
+    def get_all_recordings_given_date(self, y: str, m: str, d: str):
         requete = f"select id_gestion, accion_ges, respuesta_ges, telefono_ges, fecha_ges, cedente, serial_ced from CEDENTE a inner join GESTIONES b  on a.nombre_ced=b.cedente where tipo_ges = 1 and convert(date,fecha_ges,120)=convert(date,'{y}-{m}-{d}',120)"
         self.cursor.execute(
             requete
@@ -48,6 +48,21 @@ class SQLSERVERDBModel:
                    and telefono_ges='0980427196' "
         self.cursor.execute(requests)
         return self.cursor.fetchall()
+
+    def add_cedente_general(self):
+        list_of_commands = [
+            "INSERT INTO CEDENTE (nombre_ced) VALUES ('CEDENTE_GENERAL')",
+            "INSERT INTO CCALIDAD_FRASE (serial_ced, etiqueta_ccf, frase_ccf, alternativaf1_ccf, alternativaf2_ccf, puntaje_ccf, tipo_ccf, observacion_ccf) VALUES(353, 'CEDENTE','CEDENTE', 'EN REPRESENTACION', 'LE LLAMAMOS DE', 2, 'ACTIVO', 'GENERAL')",
+            "INSERT INTO CCALIDAD_FRASE (serial_ced, etiqueta_ccf, frase_ccf, alternativaf1_ccf, alternativaf2_ccf, puntaje_ccf, tipo_ccf, observacion_ccf) VALUES(353, 'CIERRE','GRACIAS', 'QUE TENGA UN', 'HASTA LUEGO', 2, 'ACTIVO', 'GENERAL')",
+            "INSERT INTO CCALIDAD_FRASE (serial_ced, etiqueta_ccf, frase_ccf, alternativaf1_ccf, alternativaf2_ccf, puntaje_ccf, tipo_ccf, observacion_ccf) VALUES(353, 'CONVENIO','PROXIMO ABONO', 'FECHA DE PAGO', 'CUANDO PAGARA', 2, 'ACTIVO', 'GENERAL')",
+            "INSERT INTO CCALIDAD_FRASE (serial_ced, etiqueta_ccf, frase_ccf, alternativaf1_ccf, alternativaf2_ccf, puntaje_ccf, tipo_ccf, observacion_ccf) VALUES(353, 'GRABACION','GRABADA', 'LLAMADA ESTA SIENDO GRABADA', 'LLAMADA FUE GRABADA', 1, 'ACTIVO', 'GENERAL')",
+            "INSERT INTO CCALIDAD_FRASE (serial_ced, etiqueta_ccf, frase_ccf, alternativaf1_ccf, alternativaf2_ccf, puntaje_ccf, tipo_ccf, observacion_ccf) VALUES(353, 'IDENTIFICACION','LE SALUDA DE', 'MI NOMBRE ES', 'LE ESTA HABLANDO', 1, 'ACTIVO', 'GENERAL')",
+            "INSERT INTO CCALIDAD_FRASE (serial_ced, etiqueta_ccf, frase_ccf, alternativaf1_ccf, alternativaf2_ccf, puntaje_ccf, tipo_ccf, observacion_ccf) VALUES(353, 'MOTIVO','EL MOTIVO DE LA LLAMADA', 'EL MOTIVO DE MI LLAMADA', 'EL MOTIVO DE LA MISMA', 1, 'ACTIVO', 'GENERAL')",
+            "INSERT INTO CCALIDAD_FRASE (serial_ced, etiqueta_ccf, frase_ccf, alternativaf1_ccf, alternativaf2_ccf, puntaje_ccf, tipo_ccf, observacion_ccf) VALUES(353, 'OBJECIONES','CONVENIO A', 'REESTRUCTURACION', 'CUOTA INICIAL', 1, 'ACTIVO', 'GENERAL')",
+            "INSERT INTO CCALIDAD_FRASE (serial_ced, etiqueta_ccf, frase_ccf, alternativaf1_ccf, alternativaf2_ccf, puntaje_ccf, tipo_ccf, observacion_ccf) VALUES(353, 'SALUDO','BUENOS', 'BUENAS TARDES', 'BUENAS NOCHES', 1, 'ACTIVO', 'GENERAL')"
+        ]
+        for command in list_of_commands:
+            self.cursor.execute(command)
 
     def add_grabaciones(self, id_grabacion, nombre, telefono, fecha, audio):
         fech = f"{fecha[:4]}-{fecha[4:6]}-{fecha[6:8]}"

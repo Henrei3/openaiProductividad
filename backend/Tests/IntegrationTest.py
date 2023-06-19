@@ -101,6 +101,7 @@ class PostGreDataBaseTesting:
             print(one)
 
 
+
 class QualityAssuranceTest:
 
     @staticmethod
@@ -153,4 +154,4 @@ class QualityAssuranceTest:
                     recording.set_score(total, ticket_positive, gestion_id)
 
 
-QualityAssuranceTest.score_calculation_not_found_cedente_test()
+
