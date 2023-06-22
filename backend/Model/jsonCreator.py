@@ -11,5 +11,5 @@ class JsonFileCreator:
 
     @staticmethod
     def write_message(message, path):
-        message = {"content": message}
+        message = {"text": message}
         JsonFileCreator.write(message, path)

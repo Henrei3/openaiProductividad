@@ -11,15 +11,15 @@ class SpeechRefinement:
         return text
 
     @staticmethod
-    def refine_speech_textOpenAI(speech):
+    def refine_speech_textOpenAI(speech: str):
 
         text = speech.replace("Agente 1-", "-").replace("Agente-", "-")
         return text
 
     @staticmethod
-    def get_only_agent(speech):
+    def get_only_agent(speech: str):
         toggle = False
-        refined_speech = ""
+        refined_speech: str = ""
         for character in speech:
             if character == "-":
                 if toggle:

@@ -3,6 +3,17 @@ from backend.Model.jsonCreator import JsonFileCreator
 from backend.Controller.pathFinder import JSONFinder
 from backend.Controller.analyser import SpeechRefinement
 import os
+import abc
+
+
+class OpenAIModelInterface(metaclass=abc.ABCMeta):
+
+    @classmethod
+    def __subclasshook__(cls, subclass):
+        return (hasattr(subclass, 'get_response') and
+                callable(subclass.get_response) and
+                hasattr(subclass, 'set_response') and
+                callable(subclass.set_response))
 
 
 class AudioGPTRequestModel(RecordingModel):
@@ -32,8 +43,10 @@ class AudioGPTRequestModel(RecordingModel):
     def get_response(self):
         json_finder = JSONFinder("../analysed_records/audio_text/")
         json = json_finder.find(self.name)
-        return SpeechRefinement.refine_speech_textOpenAI(json["text"])
-
+        if json != -1:
+            openai_refinedtext = SpeechRefinement.refine_speech_textOpenAI(json["text"])
+            return SpeechRefinement.get_only_agent(openai_refinedtext)
+        return json
     def set_response(self, response):
         if not os.path.exists("../analysed_records/audio_text"):
             os.makedirs("../analysed_records/audio_text")
@@ -50,11 +63,8 @@ class ChatGPTRequestModel(RecordingModel):
         self.nbResponses += 1
         RecordingModel.__init__(self, name)
         self.system = system
-        self.message = [
-            {"role": "system", "content": system},
-            {"role": "user", "content": raw_message}
-        ]
-        self.response = ""
+        self.message = self.set_raw_message(raw_message)
+        self.response: str
         self.json_path = f"../analysed_records/gptAnswer/{name}-{self.nbResponses}GPT.json"
 
     def get_system(self):
@@ -67,7 +77,7 @@ class ChatGPTRequestModel(RecordingModel):
         return self.message
 
     def set_raw_message(self, raw_message):
-        self.message = [
+        return [
             {"role": "system", "content": self.system},
             {"role": "user", "content": raw_message}
         ]

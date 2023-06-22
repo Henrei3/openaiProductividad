@@ -1,9 +1,8 @@
 import time
-
 from backend.Model.RecordingModel import RecordingModel
-from backend.Model.RequestModel import AudioGPTRequestModel
+from backend.Model.RequestModel import AudioGPTRequestModel,OpenAIModelInterface
 from backend.Model.DB.SQLServer import SQLSERVERDBModel
-from backend.Controller.GPTCreator import OpenAIRequestCreator
+from backend.Controller.GPTCreator import OpenAIAudioRequest, OpenAIProxy
 from backend.Controller.PhrasesController import EncouragedPhrasesController
 from backend.Controller.PhrasesController import ProhibitedPhrasesController
 from backend.Model.PhrasesModel import EncouragedPhrasesModel, ProhibitedPhrasesModel
@@ -18,9 +17,9 @@ import subprocess
 class QualityAssurance:
 
     @staticmethod
-    def execute(y: str, m: str, d:str):
+    def execute(y: str, m: str, d: str):
         sql_server_model = SQLSERVERDBModel()
-        prompt = "Cliente :-Alo ? Agente:-Buenos Dias..."
+        prompt = "Cliente-Alo ? Agente-Buenos Dias..."
         subprocess.call(r"C:\Users\hjimenez\Desktop\Backup\backend\openRepo.bat")
         for line in sql_server_model.get_all_recordings_given_date(y, m, d):
             print(line)
@@ -28,18 +27,14 @@ class QualityAssurance:
             if final_wavs is not None:
                 for final_wav in final_wavs:
                     """ Speech to Text """
-                    audio = AudioGPTRequestModel(prompt, final_wav.path, final_wav.name)
-                    audio_response = OpenAIRequestCreator.audio_request(audio)
-                    audio.set_response(audio_response)
-
-                    """ Refining Speech so That only the agent speech is collected """
-                    refined_speech = SpeechRefinement.get_only_agent(audio.get_response())
+                    audio: OpenAIModelInterface = AudioGPTRequestModel(prompt, final_wav.path, final_wav.name)
+                    diarized_speech = OpenAIProxy.check_access(audio)
 
                     """ Score Calculation """
                     recording = RecordingModel(final_wav.name)
-                    positive_phrases_model = EncouragedPhrasesModel(refined_speech, str(line[5]))
+                    positive_phrases_model = EncouragedPhrasesModel(diarized_speech, str(line[5]))
                     positive, ticket_positive = EncouragedPhrasesController.calculate_score(positive_phrases_model)
-                    negative_phrases_model = ProhibitedPhrasesModel(refined_speech)
+                    negative_phrases_model = ProhibitedPhrasesModel(diarized_speech)
                     negative = ProhibitedPhrasesController.calculate_score(negative_phrases_model)
 
                     total = positive + negative
@@ -74,6 +69,3 @@ class QualityAssurance:
             processed_view[process[1]] = [process[2], process[3]]
         print(processed_view)
         return processed_view
-
-
-QualityAssurance.execute("2023", "04", "27")

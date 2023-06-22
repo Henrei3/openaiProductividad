@@ -1,3 +1,5 @@
+import pathlib
+
 from backend.Model.DB.base import engine, Session
 from backend.Model.DB.recordingsDB import Base, Gestion, PatronesExito, Contenido
 from sqlalchemy import text
@@ -9,6 +11,12 @@ from backend.Model.PhrasesModel import EncouragedPhrasesModel, ProhibitedPhrases
 from backend.Controller.analyser import SpeechRefinement
 from backend.Controller.pathFinder import JSONFinder
 from backend.Controller.PossibleWav import PossibleWav
+import unittest
+from backend.Model.RequestModel import OpenAIModelInterface, ChatGPTRequestModel, AudioGPTRequestModel
+from backend.Controller.GPTCreator import OpenAIProxy, OpenAiRequestInterface
+import subprocess
+import os
+import shutil
 
 
 class FlaskTesting:
@@ -102,10 +110,10 @@ class PostGreDataBaseTesting:
 
 
 
-class QualityAssuranceTest:
+class QualityAssuranceTest(unittest.TestCase):
 
-    @staticmethod
-    def json_managing_test():
+
+    def test_json_managing_test(self):
 
         controller = SQLSERVERDBModel()
 
@@ -124,7 +132,7 @@ class QualityAssuranceTest:
                     print(line[0])
                     recording.set_score(total, ticket_score, int(line[0]))
     @staticmethod
-    def score_calculation_not_found_cedente_test():
+    def test_score_calculation_not_found_cedente_test():
 
         controller = SQLSERVERDBModel()
 
@@ -153,5 +161,44 @@ class QualityAssuranceTest:
                     gestion_id = int(line[0])
                     recording.set_score(total, ticket_positive, gestion_id)
 
+    def test_proxy_pattern_already_existing(self):
+        controller = SQLSERVERDBModel()
+        prompt = "Cliente-Alo ? Agente-Buenos Dias"
+        subprocess.call(r"C:\Users\hjimenez\Desktop\Backup\backend\openRepo.bat")
+        for line in controller.test():
+            final_wavs = PossibleWav.get_recordings(str(line[3]), str(line[4]))
+            if final_wavs is not None:
+                print(line)
+                for final_wav in final_wavs:
 
+                    audio: OpenAIModelInterface = AudioGPTRequestModel(prompt, final_wav.path, final_wav.name)
+                    diarized_test = OpenAIProxy.check_access(audio)
 
+                    print(diarized_test)
+
+                    self.assertTrue(type(diarized_test) is str)
+
+                    self.assertTrue(len(diarized_test) > 50)
+
+    def test_proxy_pattern_unexisting(self):
+        path = '../analysed_records/audio_text'
+        if os.path.exists(path):
+            self._delete_folder_with_content(path)
+        self.test_proxy_pattern_already_existing()
+
+    def test_score_calculation(self):
+        pass
+
+    @staticmethod
+    def _delete_folder_with_content(path_to_folder):
+        folder = path_to_folder
+        for filename in os.listdir(folder):
+            file_path = os.path.join(folder, filename)
+            try:
+                if os.path.isfile(file_path) or os.path.islink(file_path):
+                    os.unlink(file_path)
+                elif os.path.isdir(file_path):
+                    shutil.rmtree(file_path)
+            except Exception as e:
+                print('Failed to delete %s. Reason: %s' % (file_path, e))
+        os.rmdir(path_to_folder)

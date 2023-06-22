@@ -49,8 +49,11 @@ class JSONFinder:
                 jsons.append(json_object)
         return jsons
 
-    """find: searches for a single occurence of the {String} name .json and return its object """
     def find(self, name):
+
+        """Searches for a single occurrence of the .json file
+         or -1 when not found"""
+
         for json_file in self.path.rglob("*.json"):
             if name in str(json_file):
                 with open(str(json_file), "r") as json_f:

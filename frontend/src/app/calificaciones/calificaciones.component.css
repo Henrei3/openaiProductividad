@@ -4,7 +4,7 @@ h2{
     text-decoration: underline #2C4D58;
 }
 
-div {
+div{
     display: flex;
     flex-direction: row;
     justify-content: space-around;
@@ -19,7 +19,13 @@ div a{
     background-color: #ffa033;
     color: white;
     font-size: x-large;
+    transition: all 0.5s;
 }
+
+div a:hover{
+font-size: 2rem;
+}
+
 .calificaciones{
     display: flex;
     flex-direction: column;
@@ -53,4 +59,25 @@ span div {
     border-radius: 10em;
     font-size:20px;
     margin: 1em 0em 2.5em 0em;
+}
+
+#information{
+    
+    height: 75%;
+    width: 75%;
+    border-width: 1em;
+    background-color: #1da6f0;
+    margin-left: 12.3vw;
+    margin-top: 5rem;
+    
+}
+
+#information div{
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    
+    margin-top: 4vw;
+    width: 85%;
+    background-color: white;
+
+    
 }
