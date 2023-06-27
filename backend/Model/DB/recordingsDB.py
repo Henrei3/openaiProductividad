@@ -4,17 +4,21 @@ from backend.Model.DB.base import Base
 from marshmallow import Schema, fields
 
 
-class Gestion(Base):
+class Recording(Base):
 
-    __tablename__ = 'gestion'
+    __tablename__ = 'recording'
 
     id = Column(Integer, primary_key=True)
     g_id = Column(Integer)
+    audio_text = Column(JSONB)
     cellphone = Column(Integer)
+    name = Column(String)
 
-    def __init__(self, g_id, cellphone):
+    def __init__(self, g_id, audio_text, cellphone, name):
         self.g_id = g_id
+        self.audio_text = audio_text
         self.cellphone = cellphone
+        self.name = name
 
 
 class GestionSchemaGet(Schema):
@@ -25,44 +29,37 @@ class GestionSchemaPost(Schema):
     audio_text = fields.Dict()
 
 
-class Contenido(Base):
-    __tablename__ = "contenido"
+class Scores(Base):
+    __tablename__ = "scores"
 
-    g_id = Column(ForeignKey("gestion.id"), primary_key=True)
-    name = Column(String)
-    audio_text = Column(JSONB)
+    s_id = Column(ForeignKey("recording.id"), primary_key=True)
     score = Column(JSONB)
-    gpt_answer = Column(JSONB)
 
-    def __init__(self, g_id, name, audio_text, score, gpt_answer):
-        self.g_id = g_id
-        self.name = name
-        self.audio_text = audio_text
+    def __init__(self, s_id, score):
+        self.s_id = s_id
         self.score = score
-        self.gpt_answer = gpt_answer
 
 
 class ContenidoSchemaPost(Schema):
     nombre = fields.String()
-    audio_text = fields.Dict()
     score = fields.Dict()
     gpt_answer = fields.Dict()
 
 
 class ContenidoSchemaGet(Schema):
-    audio_text = fields.Dict()
     score = fields.Dict()
     gpt_answer = fields.Dict()
 
 
-class PatronesExito(Base):
-    __tablename__ = "patronesexito"
+class Embedding(Base):
+    __tablename__ = "embeddings"
 
-    pe_id = Column(Integer, primary_key=True)
-    patterns = Column(JSONB)
+    e_id = Column(ForeignKey("recording.id"), primary_key=True)
+    embedding = Column(JSONB)
 
-    def __init__(self, patterns):
-        self.patterns = patterns
+    def __init__(self, e_id, patterns):
+        self.e_id = e_id
+        self.embedding = patterns
 
 
 class PatronesExitoPost(Schema):

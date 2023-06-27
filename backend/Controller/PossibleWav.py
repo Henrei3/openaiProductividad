@@ -1,4 +1,4 @@
-import typing
+from typing import List
 
 from backend.Controller.pathFinder import WavFinder
 from backend.Model.wavmodel import WavModel
@@ -7,7 +7,7 @@ import os
 
 class PossibleWav:
     @staticmethod
-    def get_recordings(phone_number, date) -> typing.List[WavModel]:
+    def get_recordings(phone_number: str, date: str) -> List[WavModel]:
         if len(phone_number) >= 10:
             path = r"Z:\Apache24\htdocs\rec\grabaciones"
             date = date.split(" ")

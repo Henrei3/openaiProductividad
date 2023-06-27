@@ -52,7 +52,8 @@ class JSONFinder:
     def find(self, name):
 
         """Searches for a single occurrence of the .json file
-         or -1 when not found"""
+         or -1 when not found
+         name shouldn't have .json extension"""
 
         for json_file in self.path.rglob("*.json"):
             if name in str(json_file):

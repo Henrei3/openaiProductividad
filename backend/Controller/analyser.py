@@ -63,3 +63,6 @@ class PatternController:
             count2.pop(to_pop)
         pattern_model.set_pattern(count2)
         return count2
+
+    def embedding_analysis(self):
+        pass

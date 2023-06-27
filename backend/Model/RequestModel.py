@@ -2,6 +2,7 @@ from backend.Model.RecordingModel import RecordingModel
 from backend.Model.jsonCreator import JsonFileCreator
 from backend.Controller.pathFinder import JSONFinder
 from backend.Controller.analyser import SpeechRefinement
+from backend.Controller.PostGreSQLController import PostgreController
 import os
 import abc
 
@@ -23,7 +24,6 @@ class AudioGPTRequestModel(RecordingModel):
         self.prompt = prompt
         self.audioPath = audio_path
         self.json_path = f"../analysed_records/audio_text/{name}.json"
-        self.response = {}
 
     def __str__(self):
         return f"Prompt : {self.get_prompt()} Audio_Path : {self.get_audio_path()}"
@@ -40,32 +40,24 @@ class AudioGPTRequestModel(RecordingModel):
     def set_audio_path(self, audio_path):
         self.audioPath = audio_path
 
-    def get_response(self):
-        json_finder = JSONFinder("../analysed_records/audio_text/")
-        json = json_finder.find(self.name)
-        if json != -1:
-            openai_refinedtext = SpeechRefinement.refine_speech_textOpenAI(json["text"])
-            return SpeechRefinement.get_only_agent(openai_refinedtext)
-        return json
     def set_response(self, response):
-        if not os.path.exists("../analysed_records/audio_text"):
-            os.makedirs("../analysed_records/audio_text")
-        JsonFileCreator.write(
-            {"text": response},
-            self.json_path
-        )
+        recording_id = self.get_recording_row()[0]
+        PostgreController.add_audio_text(recording_id, '{"text":'+response+'}')
+
+    def get_response(self):
+        postgre_controller_result = PostgreController.get_audio_text(self.get_recording_row()[0])
+        if postgre_controller_result:
+            return postgre_controller_result[0]
+        return postgre_controller_result
 
 
 class ChatGPTRequestModel(RecordingModel):
-    nbResponses = 0
 
     def __init__(self, system, raw_message, name):
-        self.nbResponses += 1
         RecordingModel.__init__(self, name)
         self.system = system
         self.message = self.set_raw_message(raw_message)
-        self.response: str
-        self.json_path = f"../analysed_records/gptAnswer/{name}-{self.nbResponses}GPT.json"
+        self.json_path = f"../analysed_records/gptAnswer/{name}GPT.json"
 
     def get_system(self):
         return self.system
@@ -89,4 +81,23 @@ class ChatGPTRequestModel(RecordingModel):
 
     def get_response(self):
         jsonfinder = JSONFinder("../")
-        return jsonfinder.find(self.get_name()+"-"+str(self.nbResponses)+"GPT")
+        return jsonfinder.find(self.get_name()+"-GPT")
+
+
+class EmbeddingRequestModel(RecordingModel):
+    def __init__(self, name: str, text: str):
+        RecordingModel.__init__(self, name)
+        self.text = text
+
+    def get_text(self):
+        return self.text
+
+    def set_response(self, embedding: dict):
+        recording_id = self.get_recording_row()[0]
+        PostgreController.add_embedding(recording_id, embedding)
+
+    def get_response(self):
+        postgre_controller_result = PostgreController.get_embedding(self.name)[1]
+        if postgre_controller_result:
+            return postgre_controller_result[0]
+        return postgre_controller_result

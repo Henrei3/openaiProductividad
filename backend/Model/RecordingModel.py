@@ -1,7 +1,9 @@
 from backend.Controller.pathFinder import WavFinder
-import os
 from backend.Model.jsonCreator import JsonFileCreator
 from backend.Controller.pathFinder import JSONFinder
+from backend.Controller.PostGreSQLController import PostgreController
+from backend.Model.DB.recordingsDB import Recording
+import os
 
 
 class RecordingModel:
@@ -24,3 +26,9 @@ class RecordingModel:
             "gestion_id": gestion_id
         }
         JsonFileCreator.write(score, "../analysed_records/scores/" + self.name + ".json")
+
+    def set_recording(self, recording_id: str):
+        PostgreController.add_recording(recording_id, self.name)
+
+    def get_recording_row(self) -> Recording:
+        return PostgreController.get_recording_row(self.name)

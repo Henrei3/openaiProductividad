@@ -1,8 +1,5 @@
-import pathlib
-
 from backend.Model.DB.base import engine, Session
-from backend.Model.DB.recordingsDB import Base, Gestion, PatronesExito, Contenido
-from sqlalchemy import text
+from backend.Model.DB.recordingsDB import Base, Recording, Embedding, Scores
 from backend.Model.RecordingModel import RecordingModel
 from backend.Model.DB.SQLServer import SQLSERVERDBModel
 from backend.Controller.PhrasesController import EncouragedPhrasesController
@@ -11,12 +8,14 @@ from backend.Model.PhrasesModel import EncouragedPhrasesModel, ProhibitedPhrases
 from backend.Controller.analyser import SpeechRefinement
 from backend.Controller.pathFinder import JSONFinder
 from backend.Controller.PossibleWav import PossibleWav
-import unittest
 from backend.Model.RequestModel import OpenAIModelInterface, ChatGPTRequestModel, AudioGPTRequestModel
-from backend.Controller.GPTCreator import OpenAIProxy, OpenAiRequestInterface
+from backend.Controller.GPTCreator import OpenAIProxy, OpenAIProxyAudio, OpenAIProxyEmbeddings
+from sqlalchemy import text, select
 import subprocess
-import os
+import unittest
+import pathlib
 import shutil
+import os
 
 
 class FlaskTesting:
@@ -27,41 +26,32 @@ class FlaskTesting:
         audio_text = {"content": "Alo ?"}
         score = {"QA": "Dos tablas "}
 
-        simple_post_object = Gestion(10, 10, 10, 10)
 
+class PostGreDataBaseTesting(unittest.TestCase):
 
-class PostGreDataBaseTesting:
-
-    @staticmethod
-    def add_real_record():
-
+    def test_add_record_audio_text_none(self):
         session = Session()
 
-        Base.metadata.create_all(engine)
-        cellphone = "34567832"
-        gestion = Gestion(cellphone)
-        session.add(gestion)
-        session.commit()
+        query = select(Recording).where(Recording.g_id == "2222")
 
-        jsonfinder = JSONFinder("./analysed_records/scores")
-        score = jsonfinder.find("out-0980427196")
-        jsonfinder = JSONFinder("./analysed_records/audio_text")
-        audio_text = jsonfinder.find("out-0980427196")
-        name = "out-0980427196"
-        gpt_answer = None
-        audio = Contenido(gestion.g_id, name, audio_text, score, gpt_answer)
-        session.add(audio)
-        session.commit()
-        session.close()
+        query_result = session.execute(query)
+        recording_object = query_result.first()
+        if recording_object is None:
+            recording = Recording('2222', None, '0995205649', 'out-something')
 
-        PostGreDataBaseTesting.see_q_a_info()
+            session.add(recording)
+            session.commit()
 
-    @staticmethod
-    def see_q_a_info():
+            query_result = session.execute(query)
+
+            recording_object = query_result.first()
+        self.assertEquals(recording_object[0].g_id, 2222)
+
+    def test_see_q_a_info(self):
         session = Session()
 
-        gestion = session.query(Gestion).all()
-        audios = session.query(Contenido).all()
+        gestion = session.query(Recording).all()
+        audios = session.query(Scores).all()
 
         print("## Gestion")
         for calidad in gestion:
@@ -71,33 +61,33 @@ class PostGreDataBaseTesting:
         for audio in audios:
             print(f"{audio.g_id} : {audio.name} - {audio.audio_text} - {audio.score} - {audio.gpt_answer}")
 
-    @staticmethod
-    def see_patterns():
+    def test_see_patterns(self):
         sess = Session()
-        gestion = sess.query(Gestion).all()
-        patrones_exito = sess.query(PatronesExito).all()
+        gestion = sess.query(Recording).all()
+        patrones_exito = sess.query(Embedding).all()
 
         print("## PatronesExito")
         for patrones in patrones_exito:
-            print(f"{patrones.pe_id}: {patrones.patterns}")
+            print(f"{patrones.e_id}: {patrones.embedding}")
 
         print("## Gestion")
         for calidad in gestion:
-            print(f"{calidad.g_id}:  {calidad.score}")
+            print(f"{calidad.id}:  {calidad.g_id} - {calidad.audio_text} - {calidad.cellphone} - {calidad.name} ")
 
-    @staticmethod
-    def create_tables():
+    def test_create_tables(self):
         Base.metadata.create_all(engine)
 
-    @staticmethod
-    def delete_tables():
-        Contenido.__table__.drop(engine)
-        Gestion.__table__.drop(engine)
+    def test_delete_tables(self):
+        Scores.__table__.drop(engine)
+        Embedding.__table__.drop(engine)
+        Recording.__table__.drop(engine)
 
-    @staticmethod
-    def reset_all_tables():
-        PostGreDataBaseTesting.delete_tables()
-        PostGreDataBaseTesting.create_tables()
+    def test_delete_patrones(self):
+        Embedding.__table__.drop(engine)
+
+    def test_reset_all_tables(self):
+        self.test_delete_tables()
+        self.test_create_tables()
 
     @staticmethod
     def read_tables():
@@ -109,9 +99,7 @@ class PostGreDataBaseTesting:
             print(one)
 
 
-
 class QualityAssuranceTest(unittest.TestCase):
-
 
     def test_json_managing_test(self):
 
@@ -131,6 +119,7 @@ class QualityAssuranceTest(unittest.TestCase):
                     ticket_score = score['ticket_score']
                     print(line[0])
                     recording.set_score(total, ticket_score, int(line[0]))
+
     @staticmethod
     def test_score_calculation_not_found_cedente_test():
 
@@ -161,6 +150,8 @@ class QualityAssuranceTest(unittest.TestCase):
                     gestion_id = int(line[0])
                     recording.set_score(total, ticket_positive, gestion_id)
 
+
+class ProxyPatternTests(unittest.TestCase):
     def test_proxy_pattern_already_existing(self):
         controller = SQLSERVERDBModel()
         prompt = "Cliente-Alo ? Agente-Buenos Dias"
@@ -171,8 +162,8 @@ class QualityAssuranceTest(unittest.TestCase):
                 print(line)
                 for final_wav in final_wavs:
 
-                    audio: OpenAIModelInterface = AudioGPTRequestModel(prompt, final_wav.path, final_wav.name)
-                    diarized_test = OpenAIProxy.check_access(audio)
+                    audio = AudioGPTRequestModel(prompt, final_wav.path, final_wav.name)
+                    diarized_test = OpenAIProxyAudio.operation(audio, False)
 
                     print(diarized_test)
 

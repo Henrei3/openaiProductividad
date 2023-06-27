@@ -1,8 +1,8 @@
 import sqlalchemy.orm
-from sqlalchemy import create_engine,MetaData
+from sqlalchemy import create_engine
 from decouple import config
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm import DeclarativeBase
+
 
 db_url = config('pg_url')
 

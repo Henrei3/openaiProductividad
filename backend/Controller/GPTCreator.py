@@ -1,39 +1,108 @@
-import openai
+from backend.Model.RequestModel import ChatGPTRequestModel, AudioGPTRequestModel
+from backend.Model.RequestModel import EmbeddingRequestModel, OpenAIModelInterface
+from backend.Controller.CalculoPrecios import AudioPriceCalculation, EmbeddingsPriceCalculation, Currency
+from backend.Model.DB.recordingsDB import Recording
+from abc import ABC, abstractmethod
 from decouple import config
-from backend.Model.RequestModel import ChatGPTRequestModel, AudioGPTRequestModel,OpenAIModelInterface
-import abc
 from typing import Union
+import openai
 
 
-class OpenAiRequestInterface(metaclass=abc.ABCMeta):
+class OpenAIProxy(ABC):
+
     @classmethod
-    def __subclasshook__(cls, subclass):
+    def check_access(cls, openai_model: OpenAIModelInterface, authorized: bool):
+        """ This is the main method of the proxy class. It returns the response of the request in the case that
+         it already exists, or it organizes the execution of said request.
+         Additionally, if authorized is set to False you will get the cost of the request instead of actually
+         executing it"""
+        response: Union[dict, None] = openai_model.get_response()
+        if response is None:
+            operation_result = cls.operation(openai_model, authorized)
+            if type(operation_result) is not float:
+                openai_model.set_response(operation_result)
+                return openai_model.get_response()
+            else:
+                return operation_result
+        else:
+            return response
+
+    @staticmethod
+    @abstractmethod
+    def operation(openai_model, authorized: bool):
+        """ This method funnels all the different operations once check access has allowed their execution """
+        pass
+
+
+class OpenAIProxyAudio(OpenAIProxy):
+    """ This method implements the abstract class OpenAiProxy to override the operation method for the
+    Audio Module of the application"""
+    @staticmethod
+    def operation(openai_model: AudioGPTRequestModel, authorized: bool):
+        if authorized:
+            return OpenAIAudioRequest.execute_request(openai_model)
+        else:
+            return OpenAIAudioRequest.calculate_price(openai_model)
+
+
+class OpenAIProxyEmbeddings(OpenAIProxy):
+    """ This method implements the abstract class OpenAIProxy to override the operation method for the
+     Embeddings Module of the application
+     """
+    @staticmethod
+    def operation(openai_model, authorized: bool):
+        if authorized:
+            return OpenAIEmbeddingRequest.execute_request(openai_model)
+        else:
+            return OpenAIEmbeddingRequest.calculate_price(openai_model)
+
+
+class OpenAiRequestMeta(type):
+    """ This class specifies the metadata of the OpenAIRequestInterface
+     It is one options to make an Interface in Python"""
+    def __instancecheck__(self, instance):
+        return self.__subclasscheck__(type(instance))
+
+    def __subclasscheck__(self, subclass):
         return (hasattr(subclass, 'execute_request') and
-                callable(subclass.execute_request))
+                callable(subclass.execute_request) and
+                hasattr(subclass, 'calculate_price') and
+                callable(subclass.calculate_price))
+
+
+class OpenAIRequestInterface(metaclass=OpenAiRequestMeta):
+    """ Interface that groups together all the OpenAI Requests """
+    pass
 
 
 class OpenAIAudioRequest:
+    """  This class makes a call to the OpenAI api to make use of whisper-1  """
 
     @staticmethod
-    def execute_request(gpt_request: AudioGPTRequestModel):
+    def execute_request(gpt_model: AudioGPTRequestModel) -> str:
+
         APIKEY = config('whisper')
 
-        audio = gpt_request.get_audio_path()
+        audio = gpt_model.get_audio_path()
         with open(audio, "rb") as audio_file:
             response = openai.Audio.transcribe(
                 api_key=APIKEY,
                 model="whisper-1",
                 file=audio_file,
-                prompt=gpt_request.get_prompt()
+                prompt=gpt_model.get_prompt()
             )
             print(response)
         return response["text"]
 
+    @staticmethod
+    def calculate_price(gpt_request: AudioGPTRequestModel):
+        AudioPriceCalculation.audio_request_price_calculation(gpt_request, Currency.AudioPricing.USD)
+
 
 class OpenAIChatRequest:
-
+    """ This class uses the most known model of OpenAI turbo-3.5 """
     @staticmethod
-    def execute_request(gpt_model: ChatGPTRequestModel):
+    def execute_request(gpt_model: ChatGPTRequestModel) -> str:
 
         APIKEY = config('whisper')
         messages = gpt_model.get_message()
@@ -48,6 +117,7 @@ class OpenAIChatRequest:
 
         print(response)
         return response['choices'][0]['message']['content']
+
     @staticmethod
     def message_parser(raw_message, system):
         message = [
@@ -56,42 +126,28 @@ class OpenAIChatRequest:
         ]
         return message
 
+    @staticmethod
+    def calculate_price(gpt_model: ChatGPTRequestModel):
+        print("Not Yet Implemented")
 
-class OpenAIProxy:
-    openai_model: OpenAIModelInterface
 
-    def __init__(self, openai_model: OpenAIModelInterface):
-        self.openai_model = openai_model
-
-    @classmethod
-    def check_access(cls, openai_model: OpenAIModelInterface):
-        response: Union[dict, int] = openai_model.get_response()
-        if response == -1:
-            audio_response = cls._operation(openai_model)
-            openai_model.set_response(audio_response)
-            return openai_model.get_response()
-        else:
-            return response
+class OpenAIEmbeddingRequest:
+    """ This class calls the ada embeddings model to create embeddings of certain texts """
 
     @staticmethod
-    def _operation(openai_model):
-        if type(openai_model) is AudioGPTRequestModel:
-            audiogpt_request_model: AudioGPTRequestModel = openai_model
-            return OpenAIAudioRequest.execute_request(audiogpt_request_model)
-        elif type(openai_model) is ChatGPTRequestModel:
-            chatgpt_request_model: ChatGPTRequestModel = openai_model
-            return OpenAIChatRequest.execute_request(chatgpt_request_model)
+    def execute_request(gpt_model: EmbeddingRequestModel) -> str:
+        openai.api_key = config("embeddings")
+        response = openai.Embedding.create(
+            model="text-embedding-ada-002",
+            input=gpt_model.get_text()
+        )
 
+        print(response)
+        return response["data"][0]["embedding"]
 
-
-
-
-
-
-
-
-
-
+    @staticmethod
+    def calculate_price(gpt_model: EmbeddingRequestModel):
+        return EmbeddingsPriceCalculation.embeddings_calculation(gpt_model, Currency.EmbeddingsPricing.USD)
 
 
 
