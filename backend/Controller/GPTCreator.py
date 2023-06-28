@@ -5,7 +5,10 @@ from backend.Model.DB.recordingsDB import Recording
 from abc import ABC, abstractmethod
 from decouple import config
 from typing import Union
+from pydub import AudioSegment
+import json
 import openai
+import os
 
 
 class OpenAIProxy(ABC):
@@ -16,7 +19,7 @@ class OpenAIProxy(ABC):
          it already exists, or it organizes the execution of said request.
          Additionally, if authorized is set to False you will get the cost of the request instead of actually
          executing it"""
-        response: Union[dict, None] = openai_model.get_response()
+        response: Union[str, None] = openai_model.get_response()
         if response is None:
             operation_result = cls.operation(openai_model, authorized)
             if type(operation_result) is not float:
@@ -78,25 +81,46 @@ class OpenAIRequestInterface(metaclass=OpenAiRequestMeta):
 class OpenAIAudioRequest:
     """  This class makes a call to the OpenAI api to make use of whisper-1  """
 
-    @staticmethod
-    def execute_request(gpt_model: AudioGPTRequestModel) -> str:
+    APIKEY = config('whisper')
 
-        APIKEY = config('whisper')
+    @classmethod
+    def execute_request(cls, gpt_model: AudioGPTRequestModel) -> str:
 
-        audio = gpt_model.get_audio_path()
-        with open(audio, "rb") as audio_file:
+        audio_path: str
+        # We segment the audio in case it is too big for the API to process
+        if gpt_model.size >= 24:
+            audio_segment = AudioSegment.from_wav(gpt_model.get_audio_path())
+            duration_in_milliseconds_split_in_two = (audio_segment.duration_seconds * 1000) / 2
+
+            response: str = ""
+            for i in range(0, 2):
+                segmented_audio = audio_segment[
+                                  duration_in_milliseconds_split_in_two*i:duration_in_milliseconds_split_in_two*(i+1)
+                                  ]
+                segmented_audio.export("segmented_audio.wav", format="wav")
+                response += cls._api_call("segmented_audio.wav", "")
+
+            os.remove("segmented_audio.wav")
+            return json.loads(response)["text"]
+        # We do a regular call in case it is a moderate size
+        else:
+            return cls._api_call(gpt_model.get_audio_path(), gpt_model.get_prompt())
+
+    @classmethod
+    def _api_call(cls, path: str, prompt: str):
+        with open(path, "rb") as audio_file:
             response = openai.Audio.transcribe(
-                api_key=APIKEY,
+                api_key=cls.APIKEY,
                 model="whisper-1",
                 file=audio_file,
-                prompt=gpt_model.get_prompt()
+                prompt=prompt
             )
-            print(response)
+        print(response)
         return response["text"]
 
     @staticmethod
     def calculate_price(gpt_request: AudioGPTRequestModel):
-        AudioPriceCalculation.audio_request_price_calculation(gpt_request, Currency.AudioPricing.USD)
+        return AudioPriceCalculation.audio_request_price_calculation(gpt_request, Currency.AudioPricing.USD)
 
 
 class OpenAIChatRequest:

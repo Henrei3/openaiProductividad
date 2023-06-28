@@ -1,8 +1,8 @@
 from backend.Model.DB.base import Base, engine
 
-from flask import Flask,request
+from flask import Flask, request
 from flask_cors import CORS
-from backend.Controller.QualityAssurance import QualityAssurance
+from backend.Controller.ApplicationProcess import QualityAssurance
 
 app = Flask(__name__)
 CORS(app)

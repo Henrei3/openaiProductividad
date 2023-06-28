@@ -1,6 +1,6 @@
-from enum import Enum
 from backend.Model.RequestModel import AudioGPTRequestModel,EmbeddingRequestModel
 from pydub import AudioSegment
+from enum import Enum
 import tiktoken
 import makeobj
 import math

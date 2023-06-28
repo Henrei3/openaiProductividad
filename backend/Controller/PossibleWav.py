@@ -17,16 +17,20 @@ class PossibleWav:
             wav_name = f"out-{phone_number}"
             wav_finder = WavFinder(path)
             records = wav_finder.find_wavs(wav_name)
-            return PossibleWav.get_one_mega_records(records)
+            return PossibleWav.get_one_but_less_than_thirty_one_mega_records(records)
 
     @staticmethod
-    def get_one_mega_records(records):
+    def get_one_but_less_than_thirty_one_mega_records(records):
         if len(records) != 0:
             one_mega_records = list()
             for record in records:
                 file_size = os.stat(record.path)
-                if file_size.st_size / (1024 * 1024) >= 1:
+                file_size_in_mega = file_size.st_size / (1024 * 1024)
+
+                if 1 <= file_size_in_mega < 31:
+                    record.size = file_size_in_mega
                     one_mega_records.append(record)
+
             if len(one_mega_records) != 0:
                 for to_print in one_mega_records:
                     print(to_print.path)

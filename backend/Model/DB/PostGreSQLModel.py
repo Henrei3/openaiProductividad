@@ -1,6 +1,6 @@
 from backend.Model.DB.recordingsDB import Recording, Scores, Embedding
 from backend.Model.DB.base import Session, Base, engine
-from sqlalchemy import text
+from sqlalchemy import text, select
 from typing import Optional
 
 
@@ -16,12 +16,14 @@ class PostGre:
         return gestion
 
     def get_recording_given_name(self, name: str):
-        request = f"SELECT * FROM recording WHERE name like '%{name}%';"
-        return self.custom_requete(request)
+        request = self.session.query(Recording).filter(Recording.name.like(f"{name}"))
+        return self.session.execute(request)
 
     def update_recording_audio_text(self, recording_id: str, audio_text: dict):
-        request = f"UPDATE recording SET audio_text = '{audio_text}' WHERE id = {recording_id};"
-        self.custom_requete(request)
+        self.session.query(Recording).filter(Recording.id == recording_id).update(
+            {Recording.audio_text: audio_text}, synchronize_session='auto'
+        )
+        self.session.commit()
 
     def get_audio_text(self, recording_id: str):
         request = f"SELECT audio_text FROM recording WHERE id = {recording_id}"
@@ -46,6 +48,16 @@ class PostGre:
         return self.custom_requete(
             f"SELECT g_id, score FROM scores s JOIN recording r ON s.s_id=r.id where name like '%{y}{m}{d}%'"
         )
+
+    def get_recordings_given_date(self, y: str, m: str, d: str):
+        result = self.session.query(Recording).filter(Recording.audio_text != 'null', Recording.name.like(
+            f'%{y}{m}{d}%')
+        )
+        return self.session.execute(result)
+
+    def check_if_exists(self, table: Base, identifier: str):
+        requete = select(table).where(table.id == identifier)
+        return self.session.execute(requete)
 
     def _add(self, value):
         self.session.add(value)

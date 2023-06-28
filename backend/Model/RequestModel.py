@@ -2,7 +2,7 @@ from backend.Model.RecordingModel import RecordingModel
 from backend.Model.jsonCreator import JsonFileCreator
 from backend.Controller.pathFinder import JSONFinder
 from backend.Controller.analyser import SpeechRefinement
-from backend.Controller.PostGreSQLController import PostgreController
+from backend.Controller.PostGreSQLController import PostgreController,Recording
 import os
 import abc
 
@@ -19,10 +19,11 @@ class OpenAIModelInterface(metaclass=abc.ABCMeta):
 
 class AudioGPTRequestModel(RecordingModel):
 
-    def __init__(self, prompt, audio_path, name):
+    def __init__(self, prompt, audio_path, name, size):
         RecordingModel.__init__(self, name)
         self.prompt = prompt
         self.audioPath = audio_path
+        self.size = size
         self.json_path = f"../analysed_records/audio_text/{name}.json"
 
     def __str__(self):
@@ -41,14 +42,16 @@ class AudioGPTRequestModel(RecordingModel):
         self.audioPath = audio_path
 
     def set_response(self, response):
-        recording_id = self.get_recording_row()[0]
-        PostgreController.add_audio_text(recording_id, '{"text":'+response+'}')
+        recording: Recording = self.get_recording_row()[0]
+        return PostgreController.add_audio_text(recording.id, '{"text":"'+response+'"}')
 
     def get_response(self):
-        postgre_controller_result = PostgreController.get_audio_text(self.get_recording_row()[0])
-        if postgre_controller_result:
+        if self.get_recording_row() is not None:
+            recording: Recording = self.get_recording_row()[0]
+            postgre_controller_result = PostgreController.get_audio_text(recording.id)
             return postgre_controller_result[0]
-        return postgre_controller_result
+        else:
+            return None
 
 
 class ChatGPTRequestModel(RecordingModel):
@@ -97,7 +100,9 @@ class EmbeddingRequestModel(RecordingModel):
         PostgreController.add_embedding(recording_id, embedding)
 
     def get_response(self):
-        postgre_controller_result = PostgreController.get_embedding(self.name)[1]
-        if postgre_controller_result:
-            return postgre_controller_result[0]
-        return postgre_controller_result
+        PostgreController.get_embedding(self.name)
+        if PostgreController.get_embedding(self.name):
+            postgre_controller_result = PostgreController.get_embedding(self.name)[1]
+            return postgre_controller_result
+
+        return None

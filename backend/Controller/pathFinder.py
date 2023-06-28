@@ -1,21 +1,21 @@
-import typing
 from pathlib import WindowsPath
-import json
 from backend.Model.wavmodel import WavModel
-import time
+import typing
+import json
 
 
 class WavFinder:
 
     def __init__(self, origin):
         self.path = WindowsPath(origin)
-    """ find_all searches for all the .wav files inside
-    the origin path it then returns a list containing the name of the file and his path"""
+
     def find_all(self):
+        """ find_all searches for all the .wav files inside
+        the origin path it then returns a list containing the name of the file and his path"""
         wavs = []
         for wav in self.path.rglob("*.wav"):
 
-            wavs.append(WavModel(wav.stem[:-4], str(wav)))
+            wavs.append(WavModel(wav.stem, str(wav)))
         return wavs
 
     def find_wav(self, name):
@@ -33,15 +33,14 @@ class WavFinder:
 
 
 class JSONFinder:
-    """ Json Finder is a class that will only have the json file name as an Input """
-    """ It will return a JSON Object"""
+    """ Json Finder is a class that will only have the json file name as an Input. It will return a JSON Object"""
 
     def __init__(self, origin):
         self.path = WindowsPath(origin)
 
-    """findAll : searches all occurences of a .json in the current directory './' 
-    it returns all jsons in an JSONObject form"""
     def findAll(self):
+        """findAll : searches all occurences of a .json in the current directory './'
+            it returns all jsons in an JSONObject form"""
         jsons = []
         for json_path in self.path.rglob("*.json"):
             with open(str(json_path), "r") as json_file:
@@ -50,10 +49,9 @@ class JSONFinder:
         return jsons
 
     def find(self, name):
-
-        """Searches for a single occurrence of the .json file
+        """ Searches for a single occurrence of the .json file
          or -1 when not found
-         name shouldn't have .json extension"""
+         name shouldn't have .json extension """
 
         for json_file in self.path.rglob("*.json"):
             if name in str(json_file):
@@ -62,6 +60,7 @@ class JSONFinder:
         return -1
 
     def findAll_given_name(self, name):
+        """ Deprecated """
         jsons = list()
         for json_file in self.path.rglob("*.json"):
             if name in str(json_file):
@@ -70,6 +69,7 @@ class JSONFinder:
         return jsons
 
     def findAll_plus_name(self):
+        """ Deprecated """
         jsons = []
         for json_path in self.path.rglob("*.json"):
             with open(str(json_path), "r") as json_file:

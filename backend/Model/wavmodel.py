@@ -5,6 +5,7 @@ class WavModel:
     def __init__(self, name: str, path: str):
         self.name = name
         self.path = path
+        self.size = None
 
     def get_name(self):
         return self.name

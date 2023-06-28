@@ -8,7 +8,23 @@ class PostgreController:
     @classmethod
     def add_recording(cls, gestion_id: str, name: str, audio_text: dict = None) -> Recording:
         postgre = PostGre()
-        cellphone = name[4:-34]
+        phone_location = name.find('09')
+        temp_cell = ""
+        if phone_location == -1:
+            new_phone_location = name.find('9')
+            if new_phone_location != -1:
+                for i in range(0, 9):
+                    if name[new_phone_location+i].isdigit():
+                        temp_cell += name[new_phone_location+i]
+        else:
+            for i in range(0, 10):
+                if name[phone_location+i].isdigit():
+                    temp_cell += name[phone_location+i]
+
+        if len(temp_cell) >= 9:
+            cellphone = temp_cell
+        else:
+            cellphone = None
         return postgre.add_recording(gestion_id, audio_text, cellphone, name)
 
     @staticmethod
@@ -64,16 +80,12 @@ class PostgreController:
         postgre = PostGre()
         return postgre.get_scores(y, m, d)
 
-    @classmethod
-    def add_patttern_processes(cls, gestion_id: str, name: str, embedding: dict):
-
+    @staticmethod
+    def get_recordings_given_date(y: str, m: str, d: str):
         postgre = PostGre()
+        return postgre.get_recordings_given_date(y, m, d)
 
-        gestion = cls.add_gestion(gestion_id, name, )
 
-        postgre.add_embedding(gestion.id, embedding)
-
-        postgre.close()
 
 
 

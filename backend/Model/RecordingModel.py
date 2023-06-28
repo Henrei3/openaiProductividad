@@ -27,8 +27,9 @@ class RecordingModel:
         }
         JsonFileCreator.write(score, "../analysed_records/scores/" + self.name + ".json")
 
-    def set_recording(self, recording_id: str):
-        PostgreController.add_recording(recording_id, self.name)
+    def set_recording(self, gestion_id: str):
+        if self.get_recording_row() is None:
+            PostgreController.add_recording(gestion_id, self.name)
 
     def get_recording_row(self) -> Recording:
         return PostgreController.get_recording_row(self.name)
