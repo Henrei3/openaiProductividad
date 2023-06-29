@@ -1,14 +1,15 @@
 from backend.Controller.CalculoPrecios import AudioPriceCalculation, Currency, EmbeddingsPriceCalculation
-from backend.Model.PhrasesModel import EncouragedPhrasesModel, ProhibitedPhrasesModel
+from backend.Model.SentenceModel import EncouragedSentenceModel, ProhibitedPhrasesModel
 from backend.Model.DB.PostGreSQLModel import PostGre, Recording, Scores, Embedding, Base
-from backend.Model.RequestModel import EmbeddingRequestModel, AudioGPTRequestModel,RecordingModel
+from backend.Model.RequestModel import EmbeddingRequestModel, AudioGPTRequestModel, RecordingModel
 from backend.Controller.GPTCreator import OpenAIProxyAudio, OpenAIProxyEmbeddings
 from backend.Controller.PostGreSQLController import PostgreController
-from backend.Model.DB.SQLServer import SQLSERVERDBModel
+from backend.Controller.SQLServerController import SQLSERVERDBModel, SQLServerController
 from backend.Controller.PossibleWav import PossibleWav
 from backend.Controller.pathFinder import WavFinder
 from pydub import AudioSegment
 from decouple import config
+from unittest.mock import Mock
 import subprocess
 import sqlalchemy
 import unittest
@@ -18,26 +19,66 @@ import os
 
 class PhrasesUnitTesting(unittest.TestCase):
     def test_get_encouraged_list_when_ced_unexistent(self):
-        phrases_test = EncouragedPhrasesModel("Hola Que tal", "nonexistingced")
+        phrases_test = EncouragedSentenceModel("Hola Que tal", "nonexistingced")
         encouraged_list = phrases_test.get_encouraged_list()
         self.assertNotEquals(encouraged_list, None)
 
     def test_get_encouraged_list_when_ced_exists(self):
-        phrases_test = EncouragedPhrasesModel("Hola Que tal", "diners")
+        phrases_test = EncouragedSentenceModel("Hola Que tal", "diners")
         encouraged_list = phrases_test.get_encouraged_list()
         self.assertNotEquals(encouraged_list, None)
 
     def test_cedente_general_exists(self):
-        phrases_test = EncouragedPhrasesModel("Hola Que tal", "CEDENTE_GENERAL")
+        phrases_test = EncouragedSentenceModel("Hola Que tal", "CEDENTE_GENERAL")
         encouraged_list = phrases_test.get_encouraged_list()
         self.assertNotEquals(encouraged_list, None)
 
 
-class ConexionTesting(unittest.TestCase):
+class SQLServerModelTesting(unittest.TestCase):
     def test_cnxn_getserialced_working(self):
         cnxn = SQLSERVERDBModel()
-        element = cnxn.get_serialced_fromname("diners")
+        element = cnxn.get_serialced_from_cedente("diners")
         self.assertNotEquals(element, None)
+
+    def test_setup_cedente_general(self):
+        cnxn = SQLSERVERDBModel()
+        cnxn.setup_cedente_general()
+        serial_ced = cnxn.get_serialced_from_cedente("CEDENTE_GENERAL")
+
+        self.assertNotEqual(serial_ced, None)
+
+        sentences = cnxn.get_positive_sentences(serial_ced[0])
+        for sentence in sentences:
+            print(sentence)
+        self.assertNotEqual(sentences, None)
+
+
+class SQLServerControllerTesting(unittest.TestCase):
+    def test_get_positive_sentences_from_cedente_general(self):
+        controller = SQLServerController()
+        sentences = controller.get_positive_sentences_from_cedente("CEDENTE_GENERAL")
+
+        self.assertNotEqual(sentences, None, "Senteces seems to be None")
+        for sentence in sentences:
+            print(sentence)
+
+    def test_get_positive_sentences_from_unexisting(self):
+        controller = SQLServerController()
+
+        sentences = controller.get_positive_sentences_from_cedente("unexisting")
+
+        self.assertNotEqual(sentences, None, "Senteces seems to be None")
+        for sentence in sentences:
+            print(sentence)
+
+    def test_get_positive_sentences_from_existing(self):
+        controller = SQLServerController()
+
+        sentences = controller.get_positive_sentences_from_cedente("diners")
+
+        self.assertNotEqual(sentences, None, "Senteces seems to be None")
+        for sentence in sentences:
+            print(sentence)
 
 
 class AudioClassCalculationTesting(unittest.TestCase):

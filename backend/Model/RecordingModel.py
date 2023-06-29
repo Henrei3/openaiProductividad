@@ -32,4 +32,4 @@ class RecordingModel:
             PostgreController.add_recording(gestion_id, self.name)
 
     def get_recording_row(self) -> Recording:
-        return PostgreController.get_recording_row(self.name)
+        return PostgreController.get_recording(self.name)

@@ -1,9 +1,9 @@
 from backend.Controller.PhrasesController import EncouragedPhrasesController, ProhibitedPhrasesController
-from backend.Model.PhrasesModel import EncouragedPhrasesModel, ProhibitedPhrasesModel
+from backend.Model.SentenceModel import EncouragedSentenceModel, ProhibitedPhrasesModel
 from backend.Model.RecordingModel import RecordingModel
 from backend.Model.RequestModel import AudioGPTRequestModel
 from backend.Model.RequestModel import EmbeddingRequestModel
-from backend.Model.DB.SQLServer import SQLSERVERDBModel
+from backend.Model.DB.SQLServerModel import SQLSERVERDBModel
 from backend.Model.DB.recordingsDB import Recording
 from backend.Model.jsonCreator import JsonFileCreator
 from backend.Controller.PostGreSQLController import PostgreController
@@ -14,6 +14,8 @@ from backend.Controller.GPTCreator import OpenAIModelInterface, OpenAIEmbeddingR
 from abc import ABC, abstractmethod
 from backend.Controller.analyser import SpeechRefinement
 from backend.Controller.analyser import PatternController
+from backend.Controller.ScoreHandler import EncouragedPhrasesScoreHandler, ProhibitedPhrasesScoreHandler
+from backend.Controller.ScoreHandler import DatabaseStoringScoreHandler
 import subprocess
 import json
 import os
@@ -31,25 +33,30 @@ class ApplicationProcess(ABC):
         """ This method will search for all the pertinent records inside the database that were
                  recorded in a certain date the format must be y - m - d.
                  returns the price that it takes to transform all those recordings into text"""
+
         total_price = 0
         for line in cls.setup_application(y, m, d):
             phone_number = str(line[3])
             date = str(line[4])
-
-            wavs = PossibleWav.get_recordings(phone_number, date)
+            cedente = str(line[5])
             gestion_id = line[0]
             recordings = list()
 
+            wavs = PossibleWav.get_recordings(phone_number, date, cedente)
+
             if wavs:
                 for audio_file in wavs:
-                    audio_gpt: OpenAIModelInterface = AudioGPTRequestModel(
-                        prompt="", audio_path=audio_file.path, name=audio_file.name, size=audio_file.size
+                    audio_gpt = AudioGPTRequestModel(
+                        prompt="",
+                        audio_path=audio_file.path,
+                        name=audio_file.name,
+                        size=audio_file.size
                     )
+
                     # We send to the database the recording data
                     audio_gpt.set_recording(gestion_id)
 
                     proxy_response = OpenAIProxyAudio.check_access(audio_gpt, False)
-
                     if type(proxy_response) is float:
                         total_price += proxy_response
                     recordings.append(audio_file.deserialize())
@@ -80,14 +87,14 @@ class GestionesDePago(ApplicationProcess):
         subprocess.call(r"C:\Users\hjimenez\Desktop\Backup\backend\openRepo.bat")
 
         total_price = 0
-        for recording in wavs_data:
-            wav_file = WavModel.serialize(recording)
+        for wav_json in wavs_data:
+            wav_file = WavModel.serialize(wav_json)
 
-            audio: OpenAIModelInterface = AudioGPTRequestModel(prompt, wav_file.path, wav_file.name)
+            audio: OpenAIModelInterface = AudioGPTRequestModel(prompt, wav_file.path, wav_file.name, wav_file.size)
             audio_proxy_response = OpenAIProxyAudio.check_access(audio, True)
             embedding: OpenAIModelInterface = EmbeddingRequestModel(wav_file.name, audio_proxy_response)
             embedding_proxy_response = OpenAIProxyEmbeddings.check_access(embedding, False)
-            print(embedding_proxy_response)
+
             if type(embedding_proxy_response) is float:
                 total_price += embedding_proxy_response
 
@@ -116,6 +123,7 @@ class QualityAssurance(ApplicationProcess):
 
     @staticmethod
     def setup_application(y: str, m: str, d: str):
+
         sql_server_model = SQLSERVERDBModel()
         subprocess.call(r"C:\Users\hjimenez\Desktop\Backup\backend\openRepo.bat")
         return sql_server_model.get_all_recordings_given_date(y, m, d)
@@ -129,7 +137,8 @@ class QualityAssurance(ApplicationProcess):
             print(line)
             phone_number = str(line[3])
             date = str(line[4])
-            final_wavs = PossibleWav.get_recordings(phone_number, date)
+            cedente = str(line[5])
+            final_wavs = PossibleWav.get_recordings(phone_number, date, cedente)
             if final_wavs is not None:
                 for final_wav in final_wavs:
                     """ Speech to Text """
@@ -140,7 +149,7 @@ class QualityAssurance(ApplicationProcess):
 
                     """ Score Calculation """
                     recording = RecordingModel(final_wav.name)
-                    positive_phrases_model = EncouragedPhrasesModel(diarized_speech, str(line[5]))
+                    positive_phrases_model = EncouragedSentenceModel(diarized_speech, str(line[5]))
                     positive, ticket_positive = EncouragedPhrasesController.calculate_score(positive_phrases_model)
                     negative_phrases_model = ProhibitedPhrasesModel(diarized_speech)
                     negative = ProhibitedPhrasesController.calculate_score(negative_phrases_model)
@@ -152,6 +161,40 @@ class QualityAssurance(ApplicationProcess):
                 print(final_wavs)
 
     @staticmethod
+    def audio_transformation_score_calculation():
+        """ This method  transforms the stored recording data and transforms it into text,
+        this method should always be executed after audio_price_evaluation,
+        once the audio is turned into text it is evaluated with certain criteria,
+         specified throw the SQLServer database """
+
+        prompt = "Cliente-Alo ? Agente-Buenos Dias..."
+        json_finder = JSONFinder("../analysed_records")
+        wavs_data = json_finder.find("wav_data")
+
+        for wav_json in wavs_data:
+            wav_model = WavModel.serialize(wav_json)
+
+            # Audio transformation into text with the help of a Proxy
+            audio_request = AudioGPTRequestModel(prompt, wav_model.path, wav_model.name, wav_model.size)
+            proxy_response = OpenAIProxyAudio.check_access(audio_request, True)
+
+            # Score Calculation with chain of responsibility handlers
+            encouraged = EncouragedPhrasesScoreHandler()
+            prohibited = ProhibitedPhrasesScoreHandler()
+            database_storing = DatabaseStoringScoreHandler()
+            encouraged.set_next(prohibited).set_next(database_storing)
+
+            recording = PostgreController.get_recording(wav_model.name)
+            data = {"r_id": recording[0].id}
+            encouraged.handle(EncouragedSentenceModel(proxy_response, wav_model.cedente), data)
+
+
+
+
+
+
+
+    @staticmethod
     def await_test():
         processes_given_date = PostgreController.get_pa_processes("2023", "04", "27")
         processed_view = dict()
@@ -161,5 +204,5 @@ class QualityAssurance(ApplicationProcess):
         return processed_view
 
 
-audio_price = QualityAssurance.audio_price_evaluation('2023', '04', '27')
-print(audio_price)
+QualityAssurance.audio_transformation_score_calculation()
+

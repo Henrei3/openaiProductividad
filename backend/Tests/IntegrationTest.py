@@ -1,10 +1,10 @@
 from backend.Model.DB.base import engine, Session
 from backend.Model.DB.recordingsDB import Base, Recording, Embedding, Scores
 from backend.Model.RecordingModel import RecordingModel
-from backend.Model.DB.SQLServer import SQLSERVERDBModel
+from backend.Model.DB.SQLServerModel import SQLSERVERDBModel
 from backend.Controller.PhrasesController import EncouragedPhrasesController
 from backend.Controller.PhrasesController import ProhibitedPhrasesController
-from backend.Model.PhrasesModel import EncouragedPhrasesModel, ProhibitedPhrasesModel
+from backend.Model.SentenceModel import EncouragedSentenceModel, ProhibitedPhrasesModel
 from backend.Controller.analyser import SpeechRefinement
 from backend.Controller.pathFinder import JSONFinder
 from backend.Controller.PossibleWav import PossibleWav
@@ -106,7 +106,7 @@ class QualityAssuranceTest(unittest.TestCase):
         controller = SQLSERVERDBModel()
 
         for line in controller.get_all_recordings_given_date("2023", "04", "27"):
-            final_wavs = PossibleWav.get_recordings(str(line[3]), str(line[4]))
+            final_wavs = PossibleWav.get_recordings(str(line[3]), str(line[4]), str(line[5]))
             if final_wavs is not None:
                 print(line)
                 print(final_wavs)
@@ -126,7 +126,7 @@ class QualityAssuranceTest(unittest.TestCase):
         controller = SQLSERVERDBModel()
 
         for line in controller.get_all_recordings_given_date("2023", "04", "27"):
-            final_wavs = PossibleWav.get_recordings(str(line[3]), str(line[4]))
+            final_wavs = PossibleWav.get_recordings(str(line[3]), str(line[4]), str(line[5]))
             if final_wavs is not None:
                 print(line)
                 print(final_wavs)
@@ -141,7 +141,7 @@ class QualityAssuranceTest(unittest.TestCase):
                     refined_speech = SpeechRefinement.refine_speech_textOpenAI(speech)
 
                     recording = RecordingModel(final_wav.name)
-                    positive_phrases_model = EncouragedPhrasesModel(refined_speech, str(line[5]))
+                    positive_phrases_model = EncouragedSentenceModel(refined_speech, str(line[5]))
                     positive, ticket_positive = EncouragedPhrasesController.calculate_score(positive_phrases_model)
                     negative_phrases_model = ProhibitedPhrasesModel(refined_speech)
                     negative = ProhibitedPhrasesController.calculate_score(negative_phrases_model)
@@ -157,12 +157,12 @@ class ProxyPatternTests(unittest.TestCase):
         prompt = "Cliente-Alo ? Agente-Buenos Dias"
         subprocess.call(r"C:\Users\hjimenez\Desktop\Backup\backend\openRepo.bat")
         for line in controller.test():
-            final_wavs = PossibleWav.get_recordings(str(line[3]), str(line[4]))
+            final_wavs = PossibleWav.get_recordings(str(line[3]), str(line[4]), str(line[5]))
             if final_wavs is not None:
                 print(line)
                 for final_wav in final_wavs:
 
-                    audio = AudioGPTRequestModel(prompt, final_wav.path, final_wav.name)
+                    audio = AudioGPTRequestModel(prompt, final_wav.path, final_wav.name, final_wav.size)
                     diarized_test = OpenAIProxyAudio.operation(audio, False)
 
                     print(diarized_test)
@@ -193,3 +193,11 @@ class ProxyPatternTests(unittest.TestCase):
             except Exception as e:
                 print('Failed to delete %s. Reason: %s' % (file_path, e))
         os.rmdir(path_to_folder)
+
+
+class ChainOfResponsibilityTest(unittest.TestCase):
+    def test_chain_follows_the_order_specified(self):
+        pass
+
+    def test_chain_gives_an_error_if_wrong_order(self):
+        pass

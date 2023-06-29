@@ -16,7 +16,7 @@ class OpenAIProxy(ABC):
     @classmethod
     def check_access(cls, openai_model: OpenAIModelInterface, authorized: bool):
         """ This is the main method of the proxy class. It returns the response of the request in the case that
-         it already exists, or it organizes the execution of said request.
+         it already exists, or it organizes the execution of said request and saves the response in the database.
          Additionally, if authorized is set to False you will get the cost of the request instead of actually
          executing it"""
         response: Union[str, None] = openai_model.get_response()

@@ -1,6 +1,6 @@
 from backend.Model.DB.PostGreSQLModel import PostGre
 from backend.Controller.pathFinder import JSONFinder
-from backend.Model.DB.recordingsDB import Recording, Embedding
+from backend.Model.DB.recordingsDB import Recording, Embedding,Scores
 
 
 class PostgreController:
@@ -28,7 +28,7 @@ class PostgreController:
         return postgre.add_recording(gestion_id, audio_text, cellphone, name)
 
     @staticmethod
-    def get_recording_row(name: str):
+    def get_recording(name: str) -> Recording:
         postgre = PostGre()
         return postgre.get_recording_given_name(name).first()
 
@@ -53,27 +53,13 @@ class PostgreController:
         return postgre.get_embedding(name).first()
 
     @staticmethod
-    def add_scores(recording_id: str, score: dict):
+    def add_scores(score: Scores):
         postgre = PostGre()
-        postgre.add_scores(recording_id, score)
+        return postgre.add_score(score)
 
     @staticmethod
-    def get_scores(name: str):
+    def get_scores(y: str, m: str, d: str):
         pass
-
-    @classmethod
-    def add_qa_processes(cls, gestion_id: str, name: str, score: dict):
-        postgre = PostGre()
-
-        gestion = cls.add_embedding(gestion_id, name)
-
-        jsonfinder = JSONFinder("../analysed_records/audio_text")
-
-        audio = jsonfinder.find(name)
-
-        postgre.add_scores(gestion.id, audio)
-
-        postgre.close()
 
     @staticmethod
     def get_pa_processes(y: str, m: str, d: str):

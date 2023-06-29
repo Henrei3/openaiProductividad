@@ -24,18 +24,18 @@ class SQLSERVERDBModel:
         )
         return self.cursor.fetchall()
 
-    def get_serialced_fromname(self, name: str):
+    def get_serialced_from_cedente(self, name: str):
 
         requete = """select * from CEDENTE where nombre_ced= ? """
         self.cursor.execute(requete, name)
         return self.cursor.fetchone()
 
-    def get_positive_phrases(self, ced_num: str):
+    def get_positive_sentences(self, serial_ced: str):
         requete = "select * from CCALIDAD_FRASE where serial_ced= ? and tipo_ccf='ACTIVO' order by etiqueta_ccf"
-        self.cursor.execute(requete, ced_num)
+        self.cursor.execute(requete, serial_ced)
         return self.cursor.fetchall()
 
-    def get_negative_phrases(self):
+    def get_negative_sentences(self):
         request = "select * from CCALIDAD_PALABRA"
         self.cursor.execute(request)
         return self.cursor.fetchall()
@@ -80,18 +80,20 @@ class SQLSERVERDBModel:
                   f" VALUES ({id_grabacion}, {attributes['total']}, {attributes['cedente']}, {attributes['cierre']}, {attributes['convenio']}, {attributes['grabacion']}, {attributes['identificacion']}, {attributes['motivo']}, {attributes['objecciones']}, {attributes['saludo']})"
         self.cursor.execute(requete)
 
-    def setup_cedente_general(self):
+    def setup_cedente_general(self,):
+
+        serial_ced = self.get_serialced_from_cedente("CEDENTE_GENERAL")
         list_of_commands = [
-            "INSERT INTO CEDENTE (nombre_ced) VALUES ('CEDENTE_GENERAL')",
-            "INSERT INTO CCALIDAD_FRASE (serial_ced, etiqueta_ccf, frase_ccf, alternativaf1_ccf, alternativaf2_ccf, puntaje_ccf, tipo_ccf, observacion_ccf) VALUES(353, 'CEDENTE','CEDENTE', 'EN REPRESENTACION', 'LE LLAMAMOS DE', 2, 'ACTIVO', 'GENERAL')",
-            "INSERT INTO CCALIDAD_FRASE (serial_ced, etiqueta_ccf, frase_ccf, alternativaf1_ccf, alternativaf2_ccf, puntaje_ccf, tipo_ccf, observacion_ccf) VALUES(353, 'CIERRE','GRACIAS', 'QUE TENGA UN', 'HASTA LUEGO', 2, 'ACTIVO', 'GENERAL')",
-            "INSERT INTO CCALIDAD_FRASE (serial_ced, etiqueta_ccf, frase_ccf, alternativaf1_ccf, alternativaf2_ccf, puntaje_ccf, tipo_ccf, observacion_ccf) VALUES(353, 'CONVENIO','PROXIMO ABONO', 'FECHA DE PAGO', 'CUANDO PAGARA', 2, 'ACTIVO', 'GENERAL')",
-            "INSERT INTO CCALIDAD_FRASE (serial_ced, etiqueta_ccf, frase_ccf, alternativaf1_ccf, alternativaf2_ccf, puntaje_ccf, tipo_ccf, observacion_ccf) VALUES(353, 'GRABACION','GRABADA', 'LLAMADA ESTA SIENDO GRABADA', 'LLAMADA FUE GRABADA', 1, 'ACTIVO', 'GENERAL')",
-            "INSERT INTO CCALIDAD_FRASE (serial_ced, etiqueta_ccf, frase_ccf, alternativaf1_ccf, alternativaf2_ccf, puntaje_ccf, tipo_ccf, observacion_ccf) VALUES(353, 'IDENTIFICACION','LE SALUDA DE', 'MI NOMBRE ES', 'LE ESTA HABLANDO', 1, 'ACTIVO', 'GENERAL')",
-            "INSERT INTO CCALIDAD_FRASE (serial_ced, etiqueta_ccf, frase_ccf, alternativaf1_ccf, alternativaf2_ccf, puntaje_ccf, tipo_ccf, observacion_ccf) VALUES(353, 'MOTIVO','EL MOTIVO DE LA LLAMADA', 'EL MOTIVO DE MI LLAMADA', 'EL MOTIVO DE LA MISMA', 1, 'ACTIVO', 'GENERAL')",
-            "INSERT INTO CCALIDAD_FRASE (serial_ced, etiqueta_ccf, frase_ccf, alternativaf1_ccf, alternativaf2_ccf, puntaje_ccf, tipo_ccf, observacion_ccf) VALUES(353, 'OBJECIONES','CONVENIO A', 'REESTRUCTURACION', 'CUOTA INICIAL', 1, 'ACTIVO', 'GENERAL')",
-            "INSERT INTO CCALIDAD_FRASE (serial_ced, etiqueta_ccf, frase_ccf, alternativaf1_ccf, alternativaf2_ccf, puntaje_ccf, tipo_ccf, observacion_ccf) VALUES(353, 'SALUDO','BUENOS', 'BUENAS TARDES', 'BUENAS NOCHES', 1, 'ACTIVO', 'GENERAL')"
+
+            f"INSERT INTO CCALIDAD_FRASE (serial_ced, etiqueta_ccf, frase_ccf, alternativaf1_ccf, alternativaf2_ccf, puntaje_ccf, tipo_ccf, observacion_ccf) VALUES ({serial_ced[0]}, 'CIERRE','GRACIAS', 'QUE TENGA UN', 'HASTA LUEGO', 2, 'ACTIVO', 'GENERAL');",
+            f"INSERT INTO CCALIDAD_FRASE (serial_ced, etiqueta_ccf, frase_ccf, alternativaf1_ccf, alternativaf2_ccf, puntaje_ccf, tipo_ccf, observacion_ccf) VALUES ({serial_ced[0]}, 'CONVENIO','PROXIMO ABONO', 'FECHA DE PAGO', 'CUANDO PAGARA', 2, 'ACTIVO', 'GENERAL');",
+            f"INSERT INTO CCALIDAD_FRASE (serial_ced, etiqueta_ccf, frase_ccf, alternativaf1_ccf, alternativaf2_ccf, puntaje_ccf, tipo_ccf, observacion_ccf) VALUES ({serial_ced[0]}, 'GRABACION','GRABADA', 'LLAMADA ESTA SIENDO GRABADA', 'LLAMADA FUE GRABADA', 1, 'ACTIVO', 'GENERAL');",
+            f"INSERT INTO CCALIDAD_FRASE (serial_ced, etiqueta_ccf, frase_ccf, alternativaf1_ccf, alternativaf2_ccf, puntaje_ccf, tipo_ccf, observacion_ccf) VALUES ({serial_ced[0]}, 'IDENTIFICACION','LE SALUDA DE', 'MI NOMBRE ES', 'LE ESTA HABLANDO', 1, 'ACTIVO', 'GENERAL');",
+            f"INSERT INTO CCALIDAD_FRASE (serial_ced, etiqueta_ccf, frase_ccf, alternativaf1_ccf, alternativaf2_ccf, puntaje_ccf, tipo_ccf, observacion_ccf) VALUES ({serial_ced[0]}, 'MOTIVO','EL MOTIVO DE LA LLAMADA', 'EL MOTIVO DE MI LLAMADA', 'EL MOTIVO DE LA MISMA', 1, 'ACTIVO', 'GENERAL');",
+            f"INSERT INTO CCALIDAD_FRASE (serial_ced, etiqueta_ccf, frase_ccf, alternativaf1_ccf, alternativaf2_ccf, puntaje_ccf, tipo_ccf, observacion_ccf) VALUES ({serial_ced[0]}, 'OBJECIONES','CONVENIO A', 'REESTRUCTURACION', 'CUOTA INICIAL', 1, 'ACTIVO', 'GENERAL');",
+            f"INSERT INTO CCALIDAD_FRASE (serial_ced, etiqueta_ccf, frase_ccf, alternativaf1_ccf, alternativaf2_ccf, puntaje_ccf, tipo_ccf, observacion_ccf) VALUES ({serial_ced[0]}, 'SALUDO','BUENOS', 'BUENAS TARDES', 'BUENAS NOCHES', 1, 'ACTIVO', 'GENERAL');"
         ]
+        print("Len List of commands", len(list_of_commands))
         for command in list_of_commands:
             self.cursor.execute(command)
 

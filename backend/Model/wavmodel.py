@@ -2,10 +2,11 @@ from marshmallow import Schema, fields
 
 
 class WavModel:
-    def __init__(self, name: str, path: str):
+    def __init__(self, name: str, path: str, size: float = None, cedente: str = None):
         self.name = name
         self.path = path
-        self.size = None
+        self.size = size
+        self.cedente = cedente
 
     def get_name(self):
         return self.name
@@ -21,10 +22,14 @@ class WavModel:
     def serialize(json_wav_model: dict):
         name = json_wav_model["name"]
         path = json_wav_model["path"]
-
-        return WavModel(name, path)
+        size = json_wav_model["size"]
+        cedente = json_wav_model["cedente"]
+        return WavModel(name, path, size, cedente)
 
 
 class WavModelSchema(Schema):
     name = fields.String()
     path = fields.String()
+    size = fields.Float()
+    cedente = fields.String()
+

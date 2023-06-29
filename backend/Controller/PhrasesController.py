@@ -1,12 +1,12 @@
-from backend.Model.PhrasesModel import EncouragedPhrasesModel
-from backend.Model.PhrasesModel import ProhibitedPhrasesModel
+from backend.Model.SentenceModel import EncouragedSentenceModel
+from backend.Model.SentenceModel import ProhibitedPhrasesModel
 from backend.Model.RecordingModel import RecordingModel
 
 
 class EncouragedPhrasesController:
 
     @staticmethod
-    def calculate_score(phrases_model: EncouragedPhrasesModel):
+    def calculate_score(phrases_model: EncouragedSentenceModel):
         text = phrases_model.phrase.lower()
         phrases = phrases_model.get_encouraged_list()
 
@@ -50,15 +50,4 @@ class ProhibitedPhrasesController:
                 print(nonoword[0])
 
         return negative_score
-
-
-""" 
-test = "cooperativa jep"
-
-positive = EncouragedPhrasesController.calculate_score(test)
-
-negative = ProhibitedPhrasesController.calculate_score(test)
-
-total = negative + positive[0]
-"""
 

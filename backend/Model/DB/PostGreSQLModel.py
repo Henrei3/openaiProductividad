@@ -39,10 +39,9 @@ class PostGre:
             f"SELECT e_id, embedding FROM embeddings e JOIN recording r ON e.e_id=r.id where name like '%{name}%'"
         )
 
-    def add_scores(self, recording_id: str, score: dict):
-        scores = Scores(recording_id, score)
-        self._add(scores)
-        return scores
+    def add_score(self, score: Scores):
+        self._add(score)
+        return score
 
     def get_scores(self, y: str, m: str, d: str):
         return self.custom_requete(
