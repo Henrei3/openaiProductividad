@@ -1,6 +1,6 @@
 from backend.Model.DB.PostGreSQLModel import PostGre
 from backend.Controller.pathFinder import JSONFinder
-from backend.Model.DB.recordingsDB import Recording, Embedding,Scores
+from backend.Model.DB.recordingsDB import Recording, Embedding, Scores
 
 
 class PostgreController:
@@ -55,6 +55,9 @@ class PostgreController:
     @staticmethod
     def add_scores(score: Scores):
         postgre = PostGre()
+        previusly_existing_score = postgre.get_score(score.s_id).first()
+        if previusly_existing_score:
+            return postgre.update_score(score)
         return postgre.add_score(score)
 
     @staticmethod
@@ -64,14 +67,9 @@ class PostgreController:
     @staticmethod
     def get_pa_processes(y: str, m: str, d: str):
         postgre = PostGre()
-        return postgre.get_scores(y, m, d)
+        return postgre.get_scores_given_date(y, m, d)
 
     @staticmethod
     def get_recordings_given_date(y: str, m: str, d: str):
         postgre = PostGre()
         return postgre.get_recordings_given_date(y, m, d)
-
-
-
-
-

@@ -40,13 +40,24 @@ class PostGre:
         )
 
     def add_score(self, score: Scores):
-        self._add(score)
+        return self._add(score)
+
+    def update_score(self, score: Scores):
+        s_id = str(score.s_id)
+        self.session.query(Scores).filter(Scores.s_id == s_id).update(
+            {Scores.score: score.score}, synchronize_session='auto'
+        )
+        self.session.commit()
         return score
 
-    def get_scores(self, y: str, m: str, d: str):
+    def get_scores_given_date(self, y: str, m: str, d: str):
         return self.custom_requete(
             f"SELECT g_id, score FROM scores s JOIN recording r ON s.s_id=r.id where name like '%{y}{m}{d}%'"
         )
+
+    def get_score(self, s_id):
+        query = select(Scores).where(Scores.s_id == f'{s_id}')
+        return self.session.execute(query)
 
     def get_recordings_given_date(self, y: str, m: str, d: str):
         result = self.session.query(Recording).filter(Recording.audio_text != 'null', Recording.name.like(
@@ -61,6 +72,7 @@ class PostGre:
     def _add(self, value):
         self.session.add(value)
         self.session.commit()
+        return value
 
     def close(self):
         self.session.close()

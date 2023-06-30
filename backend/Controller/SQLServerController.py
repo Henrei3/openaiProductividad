@@ -27,7 +27,7 @@ class SQLServerController:
 
     def get_positive_sentences_from_cedente(self, cedente: str):
         serial_ced = self.cnxn.get_serialced_from_cedente(cedente)
-        if serial_ced:
+        if serial_ced and self.cnxn.get_positive_sentences(serial_ced[0]):
             return self.cnxn.get_positive_sentences(serial_ced[0])
         cedente_general_ced = self.cnxn.get_serialced_from_cedente("CEDENTE_GENERAL")
         if not cedente_general_ced:

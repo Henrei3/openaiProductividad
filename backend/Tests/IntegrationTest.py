@@ -2,18 +2,19 @@ from backend.Model.DB.base import engine, Session
 from backend.Model.DB.recordingsDB import Base, Recording, Embedding, Scores
 from backend.Model.RecordingModel import RecordingModel
 from backend.Model.DB.SQLServerModel import SQLSERVERDBModel
-from backend.Controller.PhrasesController import EncouragedPhrasesController
-from backend.Controller.PhrasesController import ProhibitedPhrasesController
+from backend.Controller.SentenceController import EncouragedSentencesController
+from backend.Controller.SentenceController import ProhibitedSentencesController
 from backend.Model.SentenceModel import EncouragedSentenceModel, ProhibitedPhrasesModel
 from backend.Controller.analyser import SpeechRefinement
 from backend.Controller.pathFinder import JSONFinder
 from backend.Controller.PossibleWav import PossibleWav
 from backend.Model.RequestModel import OpenAIModelInterface, ChatGPTRequestModel, AudioGPTRequestModel
 from backend.Controller.GPTCreator import OpenAIProxy, OpenAIProxyAudio, OpenAIProxyEmbeddings
+from backend.Controller.ScoreHandler import EncouragedPhrasesScoreHandler, ProhibitedPhrasesScoreHandler
+from backend.Controller.ScoreHandler import DatabaseStoringScoreHandler
 from sqlalchemy import text, select
 import subprocess
 import unittest
-import pathlib
 import shutil
 import os
 
@@ -25,130 +26,6 @@ class FlaskTesting:
 
         audio_text = {"content": "Alo ?"}
         score = {"QA": "Dos tablas "}
-
-
-class PostGreDataBaseTesting(unittest.TestCase):
-
-    def test_add_record_audio_text_none(self):
-        session = Session()
-
-        query = select(Recording).where(Recording.g_id == "2222")
-
-        query_result = session.execute(query)
-        recording_object = query_result.first()
-        if recording_object is None:
-            recording = Recording('2222', None, '0995205649', 'out-something')
-
-            session.add(recording)
-            session.commit()
-
-            query_result = session.execute(query)
-
-            recording_object = query_result.first()
-        self.assertEquals(recording_object[0].g_id, 2222)
-
-    def test_see_q_a_info(self):
-        session = Session()
-
-        gestion = session.query(Recording).all()
-        audios = session.query(Scores).all()
-
-        print("## Gestion")
-        for calidad in gestion:
-            print(f"{calidad.g_id}:  {calidad.cellphone}")
-
-        print("## Audios")
-        for audio in audios:
-            print(f"{audio.g_id} : {audio.name} - {audio.audio_text} - {audio.score} - {audio.gpt_answer}")
-
-    def test_see_patterns(self):
-        sess = Session()
-        gestion = sess.query(Recording).all()
-        patrones_exito = sess.query(Embedding).all()
-
-        print("## PatronesExito")
-        for patrones in patrones_exito:
-            print(f"{patrones.e_id}: {patrones.embedding}")
-
-        print("## Gestion")
-        for calidad in gestion:
-            print(f"{calidad.id}:  {calidad.g_id} - {calidad.audio_text} - {calidad.cellphone} - {calidad.name} ")
-
-    def test_create_tables(self):
-        Base.metadata.create_all(engine)
-
-    def test_delete_tables(self):
-        Scores.__table__.drop(engine)
-        Embedding.__table__.drop(engine)
-        Recording.__table__.drop(engine)
-
-    def test_delete_patrones(self):
-        Embedding.__table__.drop(engine)
-
-    def test_reset_all_tables(self):
-        self.test_delete_tables()
-        self.test_create_tables()
-
-    @staticmethod
-    def read_tables():
-        session = Session()
-
-        everything = session.execute(text("select * from gestion left join contenido on gestion.id = contenido.g_id"))
-
-        for one in everything:
-            print(one)
-
-
-class QualityAssuranceTest(unittest.TestCase):
-
-    def test_json_managing_test(self):
-
-        controller = SQLSERVERDBModel()
-
-        for line in controller.get_all_recordings_given_date("2023", "04", "27"):
-            final_wavs = PossibleWav.get_recordings(str(line[3]), str(line[4]), str(line[5]))
-            if final_wavs is not None:
-                print(line)
-                print(final_wavs)
-                for final_wav in final_wavs:
-                    json_finder = JSONFinder("./analysed_records/scores")
-                    print(final_wav.name)
-                    score = json_finder.find(final_wav.name)
-                    recording = RecordingModel(final_wav.name)
-                    total = score['total']
-                    ticket_score = score['ticket_score']
-                    print(line[0])
-                    recording.set_score(total, ticket_score, int(line[0]))
-
-    @staticmethod
-    def test_score_calculation_not_found_cedente_test():
-
-        controller = SQLSERVERDBModel()
-
-        for line in controller.get_all_recordings_given_date("2023", "04", "27"):
-            final_wavs = PossibleWav.get_recordings(str(line[3]), str(line[4]), str(line[5]))
-            if final_wavs is not None:
-                print(line)
-                print(final_wavs)
-                for final_wav in final_wavs:
-                    jsonfinder = JSONFinder("./analysed_records/audio_text/")
-
-                    speech: str = ""
-
-                    for json_object in jsonfinder.findAll():
-                        speech = json_object['text']
-
-                    refined_speech = SpeechRefinement.refine_speech_textOpenAI(speech)
-
-                    recording = RecordingModel(final_wav.name)
-                    positive_phrases_model = EncouragedSentenceModel(refined_speech, str(line[5]))
-                    positive, ticket_positive = EncouragedPhrasesController.calculate_score(positive_phrases_model)
-                    negative_phrases_model = ProhibitedPhrasesModel(refined_speech)
-                    negative = ProhibitedPhrasesController.calculate_score(negative_phrases_model)
-
-                    total = positive + negative
-                    gestion_id = int(line[0])
-                    recording.set_score(total, ticket_positive, gestion_id)
 
 
 class ProxyPatternTests(unittest.TestCase):
@@ -177,9 +54,6 @@ class ProxyPatternTests(unittest.TestCase):
             self._delete_folder_with_content(path)
         self.test_proxy_pattern_already_existing()
 
-    def test_score_calculation(self):
-        pass
-
     @staticmethod
     def _delete_folder_with_content(path_to_folder):
         folder = path_to_folder
@@ -196,8 +70,48 @@ class ProxyPatternTests(unittest.TestCase):
 
 
 class ChainOfResponsibilityTest(unittest.TestCase):
+
     def test_chain_follows_the_order_specified(self):
-        pass
+        encouraged = EncouragedPhrasesScoreHandler()
+        prohibited = ProhibitedPhrasesScoreHandler()
+        database_storage = DatabaseStoringScoreHandler()
+
+        encouraged.set_next(prohibited).set_next(database_storage)
+
+        encouraged_model = EncouragedSentenceModel("Buenos Dias", "Unexistent")
+
+        recording = RecordingModel("chainOfResponsibilityTest")
+        recording.set_recording("12356")
+        recording_db = recording.get_recording_row()
+
+        result: Scores = encouraged.handle(encouraged_model, {"r_id": recording_db[0].id})
+
+        self.assertEqual(type(result), Scores)
+
+        print(result.s_id, result.score)
 
     def test_chain_gives_an_error_if_wrong_order(self):
-        pass
+        encouraged = EncouragedPhrasesScoreHandler()
+        prohibited = ProhibitedPhrasesScoreHandler()
+        database_storage = DatabaseStoringScoreHandler()
+
+        encouraged_model = EncouragedSentenceModel("Buenos Dias", "Unexistent")
+
+        recording = RecordingModel("chainOfResponsibilityTest")
+        recording.set_recording("12356")
+        recording_db: Recording = recording.get_recording_row()[0]
+
+        encouraged.set_next(database_storage).set_next(prohibited)
+
+        with self.assertRaises(AttributeError):
+            encouraged.handle(encouraged_model, {"r_id": recording_db.id})
+
+        prohibited.set_next(encouraged).set_next(database_storage).set_next(None)
+
+        prohibited_model = ProhibitedPhrasesModel("Buenos Dias")
+        with self.assertRaises(AttributeError):
+
+            prohibited.handle(
+                prohibited_model, {"ticket_positive": {"CEDENTE": 9}, "r_id": recording_db.id, "positive": 9}
+            )
+

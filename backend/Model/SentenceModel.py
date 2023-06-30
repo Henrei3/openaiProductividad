@@ -6,8 +6,8 @@ import os
 
 class SentenceModel:
 
-    def __init__(self, phrase):
-        self.phrase = phrase
+    def __init__(self, sentence):
+        self.sentence = sentence
 
     def set_phrase_score(self, total, ticket_score):
         """
@@ -36,26 +36,19 @@ class SentenceModel:
 
 class EncouragedSentenceModel(SentenceModel):
 
-    encouraged: list = None
+    encouraged = list()
 
-    def __init__(self, phrase, cedente):
-        SentenceModel.__init__(self, phrase)
+    def __init__(self, sentence, cedente):
+        SentenceModel.__init__(self, sentence)
         self.controller = SQLServerController()
-        phrases = self.controller.get_positive_sentences_from_cedente(cedente)
-
-        for data in phrases:
+        sentences = self.controller.get_positive_sentences_from_cedente(cedente)
+        print(sentences)
+        for data in sentences:
             self.encouraged.append(
                 {data[2]: [data[3], data[4], data[5]], "PUNTAJE": data[6]}
             )
 
     def get_encouraged_list(self):
-        if self.encouraged:
-            element = self.cnxn.get_serialced_from_cedente('CEDENTE_GENERAL')
-            phrases = self.cnxn.get_positive_sentences(element[0])
-            for data in phrases:
-                self.encouraged.append(
-                    {data[2]: [data[3], data[4], data[5]], "PUNTAJE": data[6]}
-                )
         return self.encouraged
 
 

@@ -81,10 +81,12 @@ class SQLSERVERDBModel:
         self.cursor.execute(requete)
 
     def setup_cedente_general(self,):
-
+        self.cursor.execute(
+            "INSERT INTO CEDENTE (nombre_ced) VALUES ('CEDENTE_GENERAL');"
+        )
         serial_ced = self.get_serialced_from_cedente("CEDENTE_GENERAL")
         list_of_commands = [
-
+            f"INSERT INTO CCALIDAD_FRASE (serial_ced, etiqueta_ccf, frase_ccf, alternativaf1_ccf, alternativaf2_ccf, puntaje_ccf, tipo_ccf, observacion_ccf) VALUES ({serial_ced[0]}, 'CEDENTE','CEDENTE', 'EN REPRESENTACION', 'LE LLAMAMOS DE', 2, 'ACTIVO', 'GENERAL');",
             f"INSERT INTO CCALIDAD_FRASE (serial_ced, etiqueta_ccf, frase_ccf, alternativaf1_ccf, alternativaf2_ccf, puntaje_ccf, tipo_ccf, observacion_ccf) VALUES ({serial_ced[0]}, 'CIERRE','GRACIAS', 'QUE TENGA UN', 'HASTA LUEGO', 2, 'ACTIVO', 'GENERAL');",
             f"INSERT INTO CCALIDAD_FRASE (serial_ced, etiqueta_ccf, frase_ccf, alternativaf1_ccf, alternativaf2_ccf, puntaje_ccf, tipo_ccf, observacion_ccf) VALUES ({serial_ced[0]}, 'CONVENIO','PROXIMO ABONO', 'FECHA DE PAGO', 'CUANDO PAGARA', 2, 'ACTIVO', 'GENERAL');",
             f"INSERT INTO CCALIDAD_FRASE (serial_ced, etiqueta_ccf, frase_ccf, alternativaf1_ccf, alternativaf2_ccf, puntaje_ccf, tipo_ccf, observacion_ccf) VALUES ({serial_ced[0]}, 'GRABACION','GRABADA', 'LLAMADA ESTA SIENDO GRABADA', 'LLAMADA FUE GRABADA', 1, 'ACTIVO', 'GENERAL');",

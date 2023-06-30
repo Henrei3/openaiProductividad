@@ -29,7 +29,7 @@ class RecordingModel:
 
     def set_recording(self, gestion_id: str):
         if self.get_recording_row() is None:
-            PostgreController.add_recording(gestion_id, self.name)
+            return PostgreController.add_recording(gestion_id, self.name)
 
     def get_recording_row(self) -> Recording:
         return PostgreController.get_recording(self.name)

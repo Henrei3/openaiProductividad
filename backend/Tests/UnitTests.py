@@ -1,4 +1,5 @@
 from backend.Controller.CalculoPrecios import AudioPriceCalculation, Currency, EmbeddingsPriceCalculation
+from backend.Controller.SentenceController import EncouragedSentencesController, ProhibitedSentencesController
 from backend.Model.SentenceModel import EncouragedSentenceModel, ProhibitedPhrasesModel
 from backend.Model.DB.PostGreSQLModel import PostGre, Recording, Scores, Embedding, Base
 from backend.Model.RequestModel import EmbeddingRequestModel, AudioGPTRequestModel, RecordingModel
@@ -80,14 +81,22 @@ class SQLServerControllerTesting(unittest.TestCase):
         for sentence in sentences:
             print(sentence)
 
+    def test_get_positive_sentences_encouraged_sentence_not_existing(self):
+        controller = SQLServerController()
+
+        sentences = controller.get_positive_sentences_from_cedente("DINERS_MASTERCARD_FLUJO")
+
+        self.assertIsNotNone(sentences)
+
 
 class AudioClassCalculationTesting(unittest.TestCase):
 
     def setUp(self) -> None:
         subprocess.call(r"C:\Users\hjimenez\Desktop\Backup\backend\openRepo.bat")
-        audios = PossibleWav.get_recordings("0980427196", "2023-04-27")
+        audios = PossibleWav.get_recordings("0980427196", "2023-04-27", "cedente")
 
-        self.audio_request = AudioGPTRequestModel("Test", audios[0].path, "out-0980427196-702-20230427-092354-1682605434.25")
+        self.audio_request = AudioGPTRequestModel("Test", audios[0].path,
+                                                  "out-0980427196-702-20230427-092354-1682605434.25")
 
     def test_audio_calculation_usd(self):
         price = AudioPriceCalculation.audio_request_price_calculation(self.audio_request, Currency.AudioPricing.USD)
@@ -107,13 +116,12 @@ class AudioClassCalculationTesting(unittest.TestCase):
 
 
 class EmbeddingsClassCalculationTest(unittest.TestCase):
-
     a_thousand_tokens = " This is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a token This is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a token This is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a token This is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a token This is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a token This is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a token This is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a token This is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a token This is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a token This is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a token This is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a token This is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a tokenThis is a toks a tokenThis is a toks a tokenThis is a tokeee"
 
     def setUp(self) -> None:
         self.embedding_request = EmbeddingRequestModel("test", "text")
         self.thousand_tokens_request = EmbeddingRequestModel("test", self.a_thousand_tokens)
-        self.thousand_tokens_request_plus_one = EmbeddingRequestModel("test", self.a_thousand_tokens+" ")
+        self.thousand_tokens_request_plus_one = EmbeddingRequestModel("test", self.a_thousand_tokens + " ")
 
     def test_token_rounded_correctly(self):
         a_thousand_tokens_price = EmbeddingsPriceCalculation.embeddings_calculation(
@@ -134,7 +142,7 @@ class EmbeddingsClassCalculationTest(unittest.TestCase):
         new_eur_value = EmbeddingsPriceCalculation.embeddings_calculation(
             self.thousand_tokens_request_plus_one,
             Currency.EmbeddingsPricing.EUR)
-        self.assertEquals(new_eur_value, Currency.EmbeddingsPricing.EUR*2)
+        self.assertEquals(new_eur_value, Currency.EmbeddingsPricing.EUR * 2)
 
     def test_price_calculation_usd(self):
         usd_value = EmbeddingsPriceCalculation.embeddings_calculation(
@@ -208,7 +216,7 @@ class AudioGPTRequestControllerTesting(unittest.TestCase):
         wav_list = wav_finder.find_all()
         if wav_list != -1:
             for wav_model in wav_list:
-                wav_model.size = os.stat(wav_model.path).st_size / (1024*1024)
+                wav_model.size = os.stat(wav_model.path).st_size / (1024 * 1024)
                 if wav_model.size > 24:
                     gpt_request_model = AudioGPTRequestModel("", wav_model.path, wav_model.name, wav_model.size)
                     response = OpenAIProxyAudio.check_access(gpt_request_model, True)
@@ -267,3 +275,46 @@ class RecordingClassTesting(unittest.TestCase):
             print(recording.cellphone)
             self.assertTrue(str(recording.cellphone) in "0994382958")
 
+
+class SentenceControllerTesting(unittest.TestCase):
+
+    def test_score_calculation_encouraged_sentences_unexisting(self):
+        encouraged = EncouragedSentenceModel("Buenos Dias, nada, Hasta luego", "Unexsisting")
+        positive, ticket_score = EncouragedSentencesController.calculate_score(encouraged)
+        self.assertEqual(positive, 3)
+        self.assertEqual(ticket_score, [{'CIERRE': 2}, {'SALUDO': 1}])
+        print("Overall positive score : ", positive, "Detailled postitive Score : ", ticket_score)
+
+    def test_score_calculation_encouraged_when_positive_scores_unexisting(self):
+        encouraged = EncouragedSentenceModel(
+            "Buenos Dias cuando pagara le llamamos de"
+            "gracias grabada le saluda de el motivo De mi LlamAdA cuota inicial ",
+            "DINERS_MASTERCARD_FLUJO")
+
+        positive, ticket_score = EncouragedSentencesController.calculate_score(encouraged)
+        self.assertEquals(positive, 11)
+        self.assertEquals(ticket_score, [{'CEDENTE': 2},
+                                         {'CIERRE': 2},
+                                         {'CONVENIO': 2},
+                                         {'GRABACION': 1},
+                                         {'IDENTIFICACION': 1},
+                                         {'MOTIVO': 1},
+                                         {'OBJECIONES': 1},
+                                         {'SALUDO': 1}])
+
+        print("Overall positive score : ", positive, "Detailled postitive Score : ", ticket_score)
+
+    def test_score_calculation_encouraged_when_existing(self):
+        encouraged = EncouragedSentenceModel("dInErs Buenos d", "DINERS")
+        positive, ticket_score = EncouragedSentencesController.calculate_score(encouraged)
+
+        self.assertEqual(positive, 3)
+        self.assertEqual(ticket_score, [{"CEDENTE": 2}, {"SALUDO": 1}])
+        print("Overall positive score : ", positive, "Detailled postitive Score : ", ticket_score)
+
+    def test_score_calculation_prohibited_sentences(self):
+        prohibited = ProhibitedPhrasesModel("no se bestia")
+        negative_score = ProhibitedSentencesController.calculate_score(prohibited)
+
+        self.assertEqual(-2, negative_score)
+        print("Negative Score : ", negative_score)

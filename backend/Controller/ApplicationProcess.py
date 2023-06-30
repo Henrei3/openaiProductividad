@@ -1,10 +1,10 @@
-from backend.Controller.PhrasesController import EncouragedPhrasesController, ProhibitedPhrasesController
+from backend.Controller.SentenceController import EncouragedSentencesController, ProhibitedSentencesController
 from backend.Model.SentenceModel import EncouragedSentenceModel, ProhibitedPhrasesModel
 from backend.Model.RecordingModel import RecordingModel
 from backend.Model.RequestModel import AudioGPTRequestModel
 from backend.Model.RequestModel import EmbeddingRequestModel
 from backend.Model.DB.SQLServerModel import SQLSERVERDBModel
-from backend.Model.DB.recordingsDB import Recording
+from backend.Model.DB.recordingsDB import Recording, Scores
 from backend.Model.jsonCreator import JsonFileCreator
 from backend.Controller.PostGreSQLController import PostgreController
 from backend.Controller.pathFinder import JSONFinder
@@ -129,45 +129,13 @@ class QualityAssurance(ApplicationProcess):
         return sql_server_model.get_all_recordings_given_date(y, m, d)
 
     @staticmethod
-    def execute(y: str, m: str, d: str):
-        sql_server_model = SQLSERVERDBModel()
-        subprocess.call(r"C:\Users\hjimenez\Desktop\Backup\backend\openRepo.bat")
-        for line in sql_server_model.get_all_recordings_given_date(y, m, d):
-            prompt = "Cliente-Alo ? Agente-Buenos Dias..."
-            print(line)
-            phone_number = str(line[3])
-            date = str(line[4])
-            cedente = str(line[5])
-            final_wavs = PossibleWav.get_recordings(phone_number, date, cedente)
-            if final_wavs is not None:
-                for final_wav in final_wavs:
-                    """ Speech to Text """
-                    audio: OpenAIModelInterface = AudioGPTRequestModel(
-                        prompt, final_wav.path, final_wav.name, final_wav.size
-                    )
-                    diarized_speech = OpenAIProxyAudio.check_access(audio, True)
-
-                    """ Score Calculation """
-                    recording = RecordingModel(final_wav.name)
-                    positive_phrases_model = EncouragedSentenceModel(diarized_speech, str(line[5]))
-                    positive, ticket_positive = EncouragedPhrasesController.calculate_score(positive_phrases_model)
-                    negative_phrases_model = ProhibitedPhrasesModel(diarized_speech)
-                    negative = ProhibitedPhrasesController.calculate_score(negative_phrases_model)
-
-                    total = positive + negative
-                    gestion_id = int(line[0])
-                    recording.set_score(total, ticket_positive, gestion_id)
-            else:
-                print(final_wavs)
-
-    @staticmethod
     def audio_transformation_score_calculation():
         """ This method  transforms the stored recording data and transforms it into text,
         this method should always be executed after audio_price_evaluation,
         once the audio is turned into text it is evaluated with certain criteria,
          specified throw the SQLServer database """
 
-        prompt = "Cliente-Alo ? Agente-Buenos Dias..."
+        prompt = ""
         json_finder = JSONFinder("../analysed_records")
         wavs_data = json_finder.find("wav_data")
 
@@ -186,13 +154,7 @@ class QualityAssurance(ApplicationProcess):
 
             recording = PostgreController.get_recording(wav_model.name)
             data = {"r_id": recording[0].id}
-            encouraged.handle(EncouragedSentenceModel(proxy_response, wav_model.cedente), data)
-
-
-
-
-
-
+            return encouraged.handle(EncouragedSentenceModel(proxy_response, wav_model.cedente), data)
 
     @staticmethod
     def await_test():
@@ -202,7 +164,3 @@ class QualityAssurance(ApplicationProcess):
             processed_view[process[1]] = [process[2], process[3]]
         print(processed_view)
         return processed_view
-
-
-QualityAssurance.audio_transformation_score_calculation()
-
