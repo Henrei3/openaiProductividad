@@ -61,11 +61,7 @@ class PostgreController:
         return postgre.add_score(score)
 
     @staticmethod
-    def get_scores(y: str, m: str, d: str):
-        pass
-
-    @staticmethod
-    def get_pa_processes(y: str, m: str, d: str):
+    def get_scores_given_date(y: str, m: str, d: str):
         postgre = PostGre()
         return postgre.get_scores_given_date(y, m, d)
 

@@ -11,7 +11,7 @@ class EncouragedSentencesController:
         encouraged_list = phrases_model.get_encouraged_list()
 
         overall_score = 0
-        positive_score = list()
+        positive_score = dict()
 
         for ticket_row in encouraged_list:
             sentence_category = list(ticket_row)[0]
@@ -20,18 +20,11 @@ class EncouragedSentencesController:
                 if positive_sentence.lower() in sentence:
                     positive_sentence_points = int(ticket_row.get("PUNTAJE"))
                     overall_score += positive_sentence_points
-                    if len(positive_score) > 0:
-                        for positive_score_element in positive_score:
-                            if sentence_category in positive_score_element:
-                                positive_score_element[sentence_category] += positive_sentence_points
-                            elif positive_score_element == positive_score[-1]:
-                                positive_score.append({
-                                    sentence_category: 0
-                                })
+                    if sentence_category in positive_score:
+                        positive_score[sentence_category] += positive_sentence_points
                     else:
-                        positive_score.append({
-                            list(ticket_row)[0]: positive_sentence_points
-                        })
+                        positive_score[sentence_category] = positive_sentence_points
+
         return overall_score, positive_score
 
 

@@ -18,15 +18,15 @@ def get_recordings():
 
 @app.route('/records', methods=['POST'])
 def add_recording():
-    for val in request.values:
-        print(val)
-
-    return QualityAssurance.await_test()
+    return QualityAssurance.await_test(request)
 
 
 @app.route("/QA", methods=["POST"])
 def execute_qa():
-    QualityAssurance.execute()
+    for val in request.values:
+        print(val)
+
+    return "Something"
 
 
 @app.route("/QA")

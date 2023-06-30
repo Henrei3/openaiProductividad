@@ -157,10 +157,18 @@ class QualityAssurance(ApplicationProcess):
             return encouraged.handle(EncouragedSentenceModel(proxy_response, wav_model.cedente), data)
 
     @staticmethod
-    def await_test():
-        processes_given_date = PostgreController.get_pa_processes("2023", "04", "27")
+    def await_test(request_values):
+        date = dict()
+        for date_string in request_values.form:
+            date = json.loads(date_string)
+
+        print(date)
+        scores_given_date = PostgreController.get_scores_given_date(date["year"], date["month"], date["day"])
+
         processed_view = dict()
-        for process in processes_given_date:
-            processed_view[process[1]] = [process[2], process[3]]
-        print(processed_view)
+        for score_row in scores_given_date:
+            score: Scores = score_row[0]
+            processed_view[score.s_id] = score.score
         return processed_view
+
+

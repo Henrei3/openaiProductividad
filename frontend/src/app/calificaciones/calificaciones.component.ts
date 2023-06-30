@@ -9,35 +9,33 @@ import { Router} from '@angular/router';
   styleUrls: ['./calificaciones.component.css']
 })
 export class CalificacionesComponent {
-  total ?:number
-  tickets ?: JSON
+  s_id?: number
+  tickets?: string[] | any
   audio ?: String
 
-  score ?:Score;
+  total ?:number;
   
   constructor(private data_service:DataService, private route: Router){
-    data_service.data$.subscribe(x => this.score = x)
-    console.log(this.score)
+    data_service.data$.subscribe(sentData => {
+      this.s_id = sentData.s_id
+      this.total = sentData.score["total"];
+      this.tickets = sentData.score["ticket_score"]
+    })
   }
   
   return(){
     this.route.navigate(['/calificaciones'])
   }
   showTotal(){
-    this.tickets = undefined
-    this.audio = undefined
-    this.total = this.score!.total
+    
+    console.log(this.total)
+
   }
   showTickets(){
-    this.tickets = this.score!.ticket_score
-    this.total = undefined
-    this.audio = undefined
+    console.log(this.tickets)
   }
 
   showAudio(){
-    this.audio=this.score?.audio_text
-    this.tickets = undefined
-    this.total = undefined
+    console.log(this.audio)
   }
 }
-

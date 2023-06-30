@@ -1,6 +1,6 @@
 <h2 (click)="return()" >Calificaciones</h2>
 
-<span><div> {{score?.name}} </div></span>
+<span><div> {{s_id}} </div></span>
 
 
 <div>
@@ -19,11 +19,37 @@
 
 </div>
 <div id="information">
-    <div >
+    <div class="audio" *ngIf="audio">
         {{audio}}
-        {{tickets}}
-        {{total}}
+        
     </div>
-    
+    <div >
+        <div class="tickets" *ngIf="tickets['CEDENTE']">
+            CEDENTE : {{tickets['CEDENTE']}}
+        </div>
+        <div *ngIf="tickets['CIERRE']">
+            CIERRE : {{tickets['CIERRE']}}
+        </div>
+        <div *ngIf="tickets['CONVENIO']">
+            CONVENIO : {{tickets['CONVENIO']}}
+        </div>
+        <div *ngIf="tickets['GRABACION']">
+            GRABACION : {{tickets['GRABACION']}}
+        </div>
+        <div *ngIf="tickets['IDENTIFICACION']">
+            IDENTIFICACION : {{tickets['IDENTIFICACION']}}
+        </div>
+        <div *ngIf="tickets['MOTIVO']">
+            MOTIVO : {{tickets['MOTIVO']}}
+        </div>
+        <div *ngIf="tickets['OBJECCIONES']">
+            OBJECCIONES : {{tickets['OBJECCIONES']}}
+        </div>
+        <div *ngIf="tickets['SALUDO']">
+            SALUDO : {{tickets['SALUDO']}}
+        </div>
+    </div>
+    <div class="total" *ngIf="total">
+        {{total}}
+    </div>    
 </div>
-

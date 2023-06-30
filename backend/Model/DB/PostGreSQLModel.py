@@ -51,9 +51,8 @@ class PostGre:
         return score
 
     def get_scores_given_date(self, y: str, m: str, d: str):
-        return self.custom_requete(
-            f"SELECT g_id, score FROM scores s JOIN recording r ON s.s_id=r.id where name like '%{y}{m}{d}%'"
-        )
+        query = select(Scores).join(Recording).filter(Recording.name.like(f'%{y}{m}{d}%'))
+        return self.session.execute(query)
 
     def get_score(self, s_id):
         query = select(Scores).where(Scores.s_id == f'{s_id}')

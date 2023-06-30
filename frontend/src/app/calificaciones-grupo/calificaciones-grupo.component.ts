@@ -28,51 +28,55 @@ export class CalificacionesGrupoComponent implements OnInit{
     for (let i = 0; i < dateSelector.length; i++){
    
       dateSelector[i].addEventListener("keyup", (e)=>{ 
-
       if(values[i] <= dateSelector[i].value.length && e.key !="ArrowRight" ){
         if (i != dateSelector.length-1 && e.key!="ArrowLeft") dateSelector[i+1].select(); 
       }
+      if(dateSelector[i].value.length <=  0 && e.key == "Backspace"){
+        if(i -1 >= 0){dateSelector[i-1].select()}
+      }
       if(i == dateSelector.length-1 && e.key=="Enter"){
         console.log("calculating...")
-        this.getScores()
+        let y:string = dateSelector[0].value
+        let m:string = dateSelector[1].value
+        let d:string = dateSelector[2].value
+        this.getScores(y,m,d)
       }
       })
     }
   }
-  
-  showScore(name:any ){
+
+
+  getScores(y: string, m:string, d:string){
+    this.scoreCalculs.executeScoreCalculations(y, m, d)
+    .then((response)=>{    
+
+      let variable = Object.keys(response.data)
+
+
+      for (let i=0; i < variable.length; i++){
+        let s_id = variable[i]  
+        
+        let score_json = response.data[s_id]
+        
+        let score = new Score(s_id, score_json)
+        
+        console.log(score)
+
+        this.scores.push(score)
+      }  
+    })
+    .catch((err)=>{
+      console.error(err)
+    })
+  }
+
+  showScore(s_id:any ){
     for(let i=0; i<this.scores.length; i++){
-      if(this.scores[i].name == name) this.dataService.sendData(this.scores[i])
+      
+      if(this.scores[i].s_id == s_id) {
+        
+        this.dataService.sendData(this.scores[i])}
     }
     this.route.navigate(['/calificacion'])
   }
-
-  getScores(){
-    this.scoreCalculs.executeScoreCalculations()
-    .then((response)=>{    
-      let variable = Object.keys(response.data)
-    
-      for (let i=0; i < variable.length; i++){
-        let name = variable[i]  
-        
-        let total = response.data[name][1]["total"]
-        
-        let ticket_score = response.data[name][1]["ticket_score"]
-        
-        let audio_text = response.data[name][0]["text"]
-        
-        let score = new Score(name,total,ticket_score,audio_text)
-        
-        this.scores.push(score)
-      }
-      
-    }
-
-    ).catch((err)=>{
-      console.error(err)
-    } 
-    )
-  }
 }
-
- 
