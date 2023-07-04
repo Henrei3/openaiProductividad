@@ -1,4 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
+@font-face {
+    font-family: 'Pacifico regular';
+    src: url(./assets/fonts/Pacifico-Regular.ttf);
+}
+
 app-root{
     height: 85vh;
     display: flex;
@@ -15,7 +20,7 @@ header{
     display: flex;
     flex-direction: row;
     justify-content: space-around;
-    height: 4rem;
+    min-height: 3.8rem;
 }
 
 a {

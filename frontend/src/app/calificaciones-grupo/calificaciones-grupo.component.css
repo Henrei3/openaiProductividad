@@ -4,7 +4,9 @@ h1{
     color: #1da6f0;
     text-decoration: underline #036BA3;
 }
-
+p{
+    max-width: 40%;
+}
 input{
     background-color: #ffa033;
     border: none;
@@ -33,9 +35,13 @@ input{
     background-color: #1da6f0;
 }
 
-div.no-data{
-    margin-top: 25vh;
+.no-data{
+    height: 80vh;
     transition: all 1s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 div.data{
     margin-top: 0;

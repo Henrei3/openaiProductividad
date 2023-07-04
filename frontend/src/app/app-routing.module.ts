@@ -7,8 +7,13 @@ import { WorkInProgressComponent } from './work-in-progress/work-in-progress.com
 import { bootstrapApplication } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { Score } from './scores/scores.model';
+import { PatronesGrupoComponent } from './patrones-grupo/patrones-grupo.component';
 
 const routes: Routes = [
+  {
+    path: 'patrones',
+    component: PatronesGrupoComponent
+  },
   {
     path:'work-in-progress',
     component:WorkInProgressComponent

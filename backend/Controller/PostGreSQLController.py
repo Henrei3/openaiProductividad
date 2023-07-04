@@ -33,6 +33,11 @@ class PostgreController:
         return postgre.get_recording_given_name(name).first()
 
     @staticmethod
+    def get_recordings_given_date(y: str, m: str, d: str):
+        postgre = PostGre()
+        return postgre.get_recordings_given_date(y, m, d)
+
+    @staticmethod
     def add_audio_text(recording_id: str, audio_text: dict):
         postgre = PostGre()
         return postgre.update_recording_audio_text(recording_id, audio_text)
@@ -65,7 +70,8 @@ class PostgreController:
         postgre = PostGre()
         return postgre.get_scores_given_date(y, m, d)
 
+
     @staticmethod
-    def get_recordings_given_date(y: str, m: str, d: str):
+    def get_embeddings_given_date(y: str, m: str, d: str):
         postgre = PostGre()
-        return postgre.get_recordings_given_date(y, m, d)
+        return postgre.get_embeddings_given_date(y,m,d)

@@ -9,6 +9,7 @@ import { HomeComponent } from './home/home.component';
 import { CalificacionesGrupoComponent } from './calificaciones-grupo/calificaciones-grupo.component';
 import { WorkInProgressComponent } from './work-in-progress/work-in-progress.component';
 import { DataService } from './data.service';
+import { PatronesGrupoComponent } from './patrones-grupo/patrones-grupo.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { DataService } from './data.service';
     CalificacionesComponent,
     HomeComponent,
     CalificacionesGrupoComponent,
-    WorkInProgressComponent
+    WorkInProgressComponent,
+    PatronesGrupoComponent
   ],
   imports: [
     BrowserModule,

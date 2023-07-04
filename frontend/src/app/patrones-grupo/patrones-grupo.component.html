@@ -1,0 +1,23 @@
+<div class="noData">
+    <h1>Patrones</h1>
+    <p> Añada la fecha de los patrones que quisiera calcular </p>
+    <span><div class="fechas">
+        <input type="text" maxlength="4">;
+        <input type="text" maxlength="2">;
+        <input type="text" maxLength="2">
+    </div></span>
+    <div id="popUp" class = "popUp">
+        <p> {{message}}</p>
+        <div>
+            <button (click)="hide('popUp', 'poppedUp')" id="ok"> {{popUp_button_message['si']}} </button> 
+            <button (click)="hide('popUp', 'poppedUp')"> {{popUp_button_message['no']}} </button>
+        </div>
+    </div>
+
+    <div id="loading" class="popUp">
+        <img src="./assets/img/loading.gif" alt="loading">
+        <h3> Cargando ... <br> Este proceso puede tardar varias horas </h3>
+    </div>
+    
+</div>
+<div></div>

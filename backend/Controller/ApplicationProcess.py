@@ -73,7 +73,7 @@ class GestionesDePago(ApplicationProcess):
         JsonFileCreator.write(date_for_storage, "../analysed_records/date.json")
         sql_server_model = SQLSERVERDBModel()
         subprocess.call(r"C:\Users\hjimenez\Desktop\Backup\backend\openRepo.bat")
-        return sql_server_model.get_all_successfull_recordings_given_date(y, m, d)
+        return sql_server_model.get_all_recordings_given_date(y, m, d)
 
     @staticmethod
     def audio_transformation_embeddings_evaluation():

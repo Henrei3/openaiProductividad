@@ -1,0 +1,105 @@
+.noData{
+    min-height: 80vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+}
+p{
+    max-width: 60%;
+    margin: 1em 0px 0em 0px;
+}
+span > div {
+    background-color: #1DA6F0;
+}
+
+input {
+    background-color: #1DA6F0;
+    border: none;
+    width: 3.1rem;
+    margin: 0px 1em 0px 1em;
+    color: white;
+    font-size: 20px;
+    text-align: center;
+}
+h1{
+    color:#FFA033;
+    font-size: 70px;
+    text-decoration: underline #F28C19;
+    margin-top: 0.45em;
+}
+.popUp{
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    visibility: hidden;
+    height: 5%;
+    width: 10%;
+    background-color: white;
+    opacity: 0;
+    top: 7rem;
+    transition:all 0.4s linear;
+}
+
+.poppedUp{
+    height: 70%;
+    width: 35%;
+    visibility: visible;
+    opacity: 1;
+    top: 5rem;
+    background-color: #1DA6F0;
+    border-radius:1em;
+    
+}
+
+.popUp > p {
+    color: black;
+    font-size: x-large;
+    transition:font-size 0.3s;
+}
+.poppedUp > p {
+    color: white;
+    font-size: xxx-large;
+}
+.popUp > div {
+    width: 80%;
+    display: flex;
+    justify-content: space-around;
+}
+button{
+    background-color: white;
+    border-radius: 0.2em;
+    border: none;
+    height: 5rem;
+    min-width: 5rem;
+    width: auto;
+    font-size: 40px;
+    transition: all 0.2s linear;
+}
+button:hover{
+    background-color: black;
+    color: white;
+}
+
+
+
+.loading {
+    visibility: visible;
+    opacity: 1;
+    min-width: 800px;
+    height: auto;
+    position: absolute;
+    top: 10vh;
+    font-family: 'Pacifico regular';
+    border-radius: 1.5em;
+    font-size: 30px;
+    text-align: center;
+}
+h3{
+    margin-top: 17px;
+}
+
