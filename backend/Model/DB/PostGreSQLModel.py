@@ -35,9 +35,9 @@ class PostGre:
         return embedding
 
     def get_embedding(self, name: str):
-        return self.custom_requete(
-            f"SELECT e_id, embedding FROM embeddings e JOIN recording r ON e.e_id=r.id where name like '%{name}%'"
-        )
+
+        query = select(Embedding).join(Recording).filter(Recording.name.like(f'%{name}%'))
+        return self.session.execute(query)
 
     def add_score(self, score: Scores):
         return self._add(score)
@@ -65,7 +65,7 @@ class PostGre:
         return self.session.execute(result)
 
     def get_embeddings_given_date(self, y: str, m: str, d: str):
-        query = select(Embedding, Recording).filter(Recording.name.like(f'%{y}{m}{d}%'))
+        query = select(Embedding).join(Recording).filter(Recording.name.like(f'%{y}{m}{d}%'))
         return self.session.execute(query)
 
     def check_if_exists(self, table: Base, identifier: str):

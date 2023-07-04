@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 from backend.Model.RecordingModel import RecordingModel
 from backend.Model.jsonCreator import JsonFileCreator
 from backend.Controller.pathFinder import JSONFinder
 from backend.Controller.analyser import SpeechRefinement
-from backend.Controller.PostGreSQLController import PostgreController,Recording
+from backend.Controller.PostGreSQLController import PostgreController, Recording, Embedding
 import os
 import abc
 
@@ -42,6 +44,7 @@ class AudioGPTRequestModel(RecordingModel):
         self.audioPath = audio_path
 
     def set_response(self, response):
+
         recording: Recording = self.get_recording_row()[0]
         return PostgreController.add_audio_text(recording.id, '{"text":"'+response+'"}')
 
@@ -95,14 +98,14 @@ class EmbeddingRequestModel(RecordingModel):
     def get_text(self):
         return self.text
 
-    def set_response(self, embedding: dict):
-        recording_id = self.get_recording_row()[0]
-        PostgreController.add_embedding(recording_id, embedding)
+    def set_response(self, embedding: dict | list):
+
+        recording: Recording = self.get_recording_row()[0]
+        return PostgreController.add_embedding(recording.id, embedding)
 
     def get_response(self):
-        PostgreController.get_embedding(self.name)
         if PostgreController.get_embedding(self.name):
-            postgre_controller_result = PostgreController.get_embedding(self.name)[1]
-            return postgre_controller_result
+            postgre_controller_result = PostgreController.get_embedding(self.name)[0]
+            return postgre_controller_result.embedding
 
         return None

@@ -17,6 +17,12 @@ export class BackendService {
 
     return axios.post("http://127.0.0.1:5000/patternPrice", date)
   }
+  executeAudioTransformationEmbeddingsCalculation(){
+    return axios.get("http://127.0.0.1:5000/audioTranformationEmbeddingsCalculation")
+  }
+  executeEmbeddingGeneration(){
+    return axios.get("http://127.0.0.1:5000/embeddingsGeneration")
+  }
 
   generateJSON(y:string, m:string, d:string){
       return '{"year":"'+y+'","month":"'+m+'","day":"'+d+'"}'

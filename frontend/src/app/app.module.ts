@@ -10,6 +10,7 @@ import { CalificacionesGrupoComponent } from './calificaciones-grupo/calificacio
 import { WorkInProgressComponent } from './work-in-progress/work-in-progress.component';
 import { DataService } from './data.service';
 import { PatronesGrupoComponent } from './patrones-grupo/patrones-grupo.component';
+import 'zone.js';
 
 @NgModule({
   declarations: [

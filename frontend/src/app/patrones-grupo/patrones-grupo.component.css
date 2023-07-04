@@ -76,7 +76,6 @@ button{
     border: none;
     height: 5rem;
     min-width: 5rem;
-    width: auto;
     font-size: 40px;
     transition: all 0.2s linear;
 }
@@ -84,8 +83,6 @@ button:hover{
     background-color: black;
     color: white;
 }
-
-
 
 .loading {
     visibility: visible;
@@ -95,11 +92,14 @@ button:hover{
     position: absolute;
     top: 10vh;
     font-family: 'Pacifico regular';
-    border-radius: 1.5em;
     font-size: 30px;
     text-align: center;
+    background-color: rgba(102, 163, 177, 0);
 }
 h3{
-    margin-top: 17px;
+    margin-top: 5px;
+}
+#loadingImage{
+    border-radius: 1.5em;
 }
 

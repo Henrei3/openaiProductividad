@@ -74,4 +74,4 @@ class PostgreController:
     @staticmethod
     def get_embeddings_given_date(y: str, m: str, d: str):
         postgre = PostGre()
-        return postgre.get_embeddings_given_date(y,m,d)
+        return postgre.get_embeddings_given_date(y, m, d)

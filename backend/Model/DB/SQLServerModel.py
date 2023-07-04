@@ -12,7 +12,7 @@ class SQLSERVERDBModel:
     def get_all_successfull_recordings_given_date(self, y: str, m: str, d: str):
         """ Method used for the embedding calculation part of the application. It returns only the operation that have
         achieved a debt payment"""
-        return self.test()
+        return self.test(y, m, d)
 
     def get_all_recordings_given_date(self, y: str, m: str, d: str):
         """ Method used for the score calculation part of the application
@@ -142,11 +142,10 @@ class SQLSERVERDBModel:
                 FOREIGN KEY (id) REFERENCES GRABACIONES(g_id) \
                 )")
 
-    def test(self):
-        requests = "select id_gestion, accion_ges, respuesta_ges, telefono_ges, fecha_ges, cedente, serial_ced \
-                   from CEDENTE a \
-                   inner join GESTIONES b  on a.nombre_ced=b.cedente \
-                   where tipo_ges = 1 and convert(date,fecha_ges,120)=convert(date,'2023-04-27',120) \
-                   and telefono_ges='0980427196' "
+    def test(self, y: str, m: str, d: str):
+
+        requests = "select top 20 id_gestion, accion_ges, respuesta_ges, telefono_ges, fecha_ges, cedente, serial_ced " \
+                   "from CEDENTE a inner join GESTIONES b  on a.nombre_ced=b.cedente " \
+                   f"where tipo_ges = 1 and convert(date,fecha_ges,120)=convert(date,'{y}-{m}-{d}',120)"
         self.cursor.execute(requests)
         return self.cursor.fetchall()

@@ -35,13 +35,12 @@ class ApplicationProcess(ABC):
                  returns the price that it takes to transform all those recordings into text"""
 
         total_price = 0
+        recordings = list[dict]()
         for line in cls.setup_application(y, m, d):
             phone_number = str(line[3])
             date = str(line[4])
             cedente = str(line[5])
             gestion_id = line[0]
-            recordings = list()
-
             wavs = PossibleWav.get_recordings(phone_number, date, cedente)
 
             if wavs:
@@ -57,9 +56,9 @@ class ApplicationProcess(ABC):
                     audio_gpt.set_recording(gestion_id)
 
                     proxy_response = OpenAIProxyAudio.check_access(audio_gpt, False)
+                    recordings.append(audio_file.deserialize())
                     if type(proxy_response) is float:
                         total_price += proxy_response
-                    recordings.append(audio_file.deserialize())
                 JsonFileCreator.write(recordings, "../analysed_records/wav_data.json")
 
         return total_price
@@ -73,7 +72,7 @@ class GestionesDePago(ApplicationProcess):
         JsonFileCreator.write(date_for_storage, "../analysed_records/date.json")
         sql_server_model = SQLSERVERDBModel()
         subprocess.call(r"C:\Users\hjimenez\Desktop\Backup\backend\openRepo.bat")
-        return sql_server_model.get_all_recordings_given_date(y, m, d)
+        return sql_server_model.get_all_successfull_recordings_given_date(y, m, d)
 
     @staticmethod
     def audio_transformation_embeddings_evaluation():
@@ -92,6 +91,7 @@ class GestionesDePago(ApplicationProcess):
 
             audio: OpenAIModelInterface = AudioGPTRequestModel(prompt, wav_file.path, wav_file.name, wav_file.size)
             audio_proxy_response = OpenAIProxyAudio.check_access(audio, True)
+
             embedding: OpenAIModelInterface = EmbeddingRequestModel(wav_file.name, audio_proxy_response)
             embedding_proxy_response = OpenAIProxyEmbeddings.check_access(embedding, False)
 
@@ -116,7 +116,9 @@ class GestionesDePago(ApplicationProcess):
             recording: Recording = row_results[0]
             embedding_request = EmbeddingRequestModel(recording.name, recording.audio_text)
             proxy_response = OpenAIProxyEmbeddings.check_access(embedding_request, True)
-            print(proxy_response)
+            print("Proxy Response : ", proxy_response)
+
+        return True
 
 
 class QualityAssurance(ApplicationProcess):
@@ -170,5 +172,3 @@ class QualityAssurance(ApplicationProcess):
             score: Scores = score_row[0]
             processed_view[score.s_id] = score.score
         return processed_view
-
-

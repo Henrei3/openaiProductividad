@@ -9,13 +9,13 @@
     <div id="popUp" class = "popUp">
         <p> {{message}}</p>
         <div>
-            <button (click)="hide('popUp', 'poppedUp')" id="ok"> {{popUp_button_message['si']}} </button> 
-            <button (click)="hide('popUp', 'poppedUp')"> {{popUp_button_message['no']}} </button>
+            <button (click)="hide('popUp', 'poppedUp')" id="ok">{{popUp_button_message['si']}}</button> 
+            <button (click)="hide('popUp', 'poppedUp')">{{popUp_button_message['no']}}</button>
         </div>
     </div>
 
     <div id="loading" class="popUp">
-        <img src="./assets/img/loading.gif" alt="loading">
+        <img src="./assets/img/loading.gif" alt="loading" id="loadingImage" >
         <h3> Cargando ... <br> Este proceso puede tardar varias horas </h3>
     </div>
     
