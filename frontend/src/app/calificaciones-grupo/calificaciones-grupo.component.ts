@@ -6,7 +6,9 @@ import { AbstractFormGroupDirective } from '@angular/forms';
 import { AppComponent } from '../app.component';
 import { DataService } from '../data.service';
 import { Score } from '../scores/scores.model';
-
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { LoadingPopUpComponent } from '../loading-pop-up/loading-pop-up.component';
+import { InfoPopUpComponent } from '../info-pop-up/info-pop-up.component';
 
 @Component({
   selector: 'app-calificaciones-grupo',
@@ -18,7 +20,7 @@ export class CalificacionesGrupoComponent implements OnInit{
 
   scores: Score[]= [];
 
-  constructor(private scoreCalculs : BackendService, private dataService: DataService, private route: Router){}
+  constructor(private scoreCalculs : BackendService, private dataService: DataService, private route: Router, private popUpCreator: MatDialog){}
 
   ngOnInit(){
     let dateSelector = document.getElementsByTagName("input")
@@ -39,19 +41,31 @@ export class CalificacionesGrupoComponent implements OnInit{
         let y:string = dateSelector[0].value
         let m:string = dateSelector[1].value
         let d:string = dateSelector[2].value
-        this.getScores(y,m,d)
+        this.getScoresPrice(y,m,d)
       }
       })
     }
   }
 
+  getScoresPrice(y:string, m:string, d:string){
+    this.popUpCreator.open(LoadingPopUpComponent)
+    this.scoreCalculs.executeScorePriceCalculations(y,m,d).then((response)=>{
+      this.popUpCreator.closeAll()
+      this.popUpCreator.open(InfoPopUpComponent,
+        {data:{message: response.data, ok_button: 'Transformar', no_button: 'Cancel'}})
+    }).catch((error_message)=>{
+      this.popUpCreator.closeAll()
+      this.popUpCreator.open(InfoPopUpComponent, {
+        data: { message: error_message, ok_button:'Ok', no_button: 'Cancelar'}
+      })
+    })
+  }
 
-  getScores(y: string, m:string, d:string){
-    this.scoreCalculs.executeScoreCalculations(y, m, d)
+  fetchScores(){
+    this.scoreCalculs.fetchScores()
     .then((response)=>{    
 
       let variable = Object.keys(response.data)
-
 
       for (let i=0; i < variable.length; i++){
         let s_id = variable[i]  
@@ -69,6 +83,8 @@ export class CalificacionesGrupoComponent implements OnInit{
       console.error(err)
     })
   }
+
+  
 
   showScore(s_id:any ){
     for(let i=0; i<this.scores.length; i++){

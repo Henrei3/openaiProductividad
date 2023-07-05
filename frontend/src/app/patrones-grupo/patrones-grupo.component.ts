@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { DataService } from '../data.service';
 import { BackendService } from '../backend-service.service';
 import { Data } from '@angular/router';
+import {MatDialog, MatDialogConfig} from '@angular/material/dialog'
+import { LoadingPopUpComponent } from '../loading-pop-up/loading-pop-up.component';
+import { InfoPopUpComponent } from '../info-pop-up/info-pop-up.component';
 
 @Component({
   selector: 'app-patrones-grupo',
@@ -14,13 +17,21 @@ export class PatronesGrupoComponent implements OnInit{
 
   popUp_button_message:any = {};
 
-  constructor(private patternSearch:BackendService, private dataTransfer:DataService){}
+  dialogConfig : MatDialogConfig = {
+    panelClass:'makeItMiddle'
+  };
+
+  constructor(private patternSearch:BackendService, private dataTransfer:DataService, private popUpCreator:MatDialog){
+    this.dialogConfig.disableClose = true
+  }
 
   ngOnInit(): void {
     
     let dateSelector = document.getElementsByTagName("input")
  
     let values:number[] = [4,2,2];
+
+    
 
     for (let i = 0; i < dateSelector.length; i++){
    
@@ -67,54 +78,81 @@ export class PatronesGrupoComponent implements OnInit{
   }
 
   show_result(hide_id:string, hide_class:string, message:string, button_yes_message:string, appear_id:string, appear_class:string){
-    this.hide(hide_id, hide_class)
     this.message = message
     this.popUp_button_message['si'] = button_yes_message
     this.appear(appear_id, appear_class)
   }
 
   getPatternPrice(y:string, m:string, d:string){
-    this.appear('loading', 'loading');
+    this.popUpCreator.open(LoadingPopUpComponent, this.dialogConfig)
     this.popUp_button_message['no'] = 'Cancelar'
     this.patternSearch.executePatternPriceSearch(y,m,d).then(
       (response)=>{
-        
+        this.popUpCreator.closeAll()
         let audio_calculation_response = response.data
-        this.show_result('loading', 'loading', audio_calculation_response, 'Transformar', 'popUp', 'poppedUp') 
-        
+        const infoPopUpRef = this.popUpCreator.open(InfoPopUpComponent, {
+          data:{message: audio_calculation_response, ok_button: 'Transformar', no_button:'Cancel'}
+        })
+        infoPopUpRef.afterClosed().subscribe(
+          (ok_button_text) => {
+            if (ok_button_text == 'Transformar'){
+              this.getEmbeddingPriceCalculateAudios()
+            }
+          }
+        )
       }
     ).catch(
       (error_message)=> {
-
-        this.show_result('loading', 'loading', error_message, 'Ok', 'popUp', 'poppedUp')
-      
+        this.popUpCreator.closeAll()
+        this.popUpCreator.open(InfoPopUpComponent, {
+          data:{message: error_message, ok_button: 'Ok', no_button:'Cancel'}
+        })
       })
   }
 
   getEmbeddingPriceCalculateAudios(){
-    this.appear('loading', 'loading')
+    this.popUpCreator.open(LoadingPopUpComponent, this.dialogConfig)
     this.patternSearch.executeAudioTransformationEmbeddingsCalculation().then(
       (response)=>{
-
+        this.popUpCreator.closeAll()
         let embedding_response = response.data
-        this.show_result('loading', 'loading',embedding_response, 'Generar', 'popUp', 'poppedUp')
+        const inforPopUpRef = this.popUpCreator.open(InfoPopUpComponent, {
+          data:{message: embedding_response, ok_button: 'Generate', no_button:'Cancel'}
+        })
+        
+        inforPopUpRef.afterClosed().subscribe((ok_button_text)=>{
+          if (ok_button_text == 'Generate'){
+            this.calculateEmbeddings()
+          }
+        })
 
       }).catch((error_messsage)=>{
-
-        this.show_result('loading', 'loading', error_messsage, 'Ok', 'popUp', 'poppedUp')
-     
+        this.popUpCreator.closeAll()
+        this.popUpCreator.open(InfoPopUpComponent, {
+          data:{message: error_messsage, ok_button: 'Ok', no_button:'Cancel'}
+        })
       })
   }
   
   calculateEmbeddings(){
-    this.appear('loading', 'loading')
+    this.popUpCreator.open(LoadingPopUpComponent, this.dialogConfig)
     this.patternSearch.executeEmbeddingGeneration().then((response)=>{
       var embedding_generation_response = response.data
-      this.show_result('loading','loading',embedding_generation_response,'Comparar un audio', 'popUp', 'poppedUp')
+      this.popUpCreator.closeAll()
+      const inforPopUpRef = this.popUpCreator.open(InfoPopUpComponent, {
+        data:{message: embedding_generation_response, ok_button: 'Comparar Audios', no_button:'Cancel'}
+      })
+      inforPopUpRef.afterClosed().subscribe((ok_button_text)=>{
+        if (ok_button_text){
+          console.log("work In progress ...")
+        }
+      })
     }).catch((error_message)=>{
-
-      this.show_result('loading', 'loading', error_message, 'Ok', 'popUp', 'poppedUp')
-
+      this.popUpCreator.closeAll()
+      this.popUpCreator.open(InfoPopUpComponent, {
+        data:{message: error_message, ok_button: 'Ok', no_button:'Cancel'}
+      })
     })
   }
+
 }

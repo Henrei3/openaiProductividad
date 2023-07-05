@@ -199,6 +199,22 @@ class PostGreControllerUnitTest(unittest.TestCase):
         for result in results:
             self.assertEqual(type(result[0]), Recording)
 
+    def test_get_scores_when_not_existing(self):
+        chunked_iterator_result = PostgreController.get_scores_given_date('2023', '05', '13')
+        self.assertIsNotNone(chunked_iterator_result)
+        for row_result in chunked_iterator_result:
+            print(row_result)
+            self.fail("A row_result should not exist chunked_iterator should be empty")
+
+    def test_get_scores_when_retrieving_name(self):
+        chunked_iterator_result = PostgreController.get_scores_given_date('2023', '04', '27')
+        for row_result in chunked_iterator_result:
+            try:
+                    name = row_result[1]
+                    self.assertEqual(type(name), str)
+            except IndexError:
+                self.fail("The function didn't wortk as expected")
+
 
 class PostGreSQLModelTesting(unittest.TestCase):
 

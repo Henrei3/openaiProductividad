@@ -10,8 +10,11 @@ import { CalificacionesGrupoComponent } from './calificaciones-grupo/calificacio
 import { WorkInProgressComponent } from './work-in-progress/work-in-progress.component';
 import { DataService } from './data.service';
 import { PatronesGrupoComponent } from './patrones-grupo/patrones-grupo.component';
+import {MatDialogModule} from '@angular/material/dialog'
+import { LoadingPopUpComponent } from './loading-pop-up/loading-pop-up.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import 'zone.js';
-
+import { InfoPopUpComponent } from './info-pop-up/info-pop-up.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -19,14 +22,19 @@ import 'zone.js';
     HomeComponent,
     CalificacionesGrupoComponent,
     WorkInProgressComponent,
-    PatronesGrupoComponent
+    PatronesGrupoComponent,
+    LoadingPopUpComponent,
+    InfoPopUpComponent
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
-    AppRoutingModule
+    AppRoutingModule,
+    MatDialogModule,
+    BrowserAnimationsModule
   ],
   providers: [DataService],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  
 })
 export class AppModule { }

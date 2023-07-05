@@ -7,11 +7,22 @@ export class BackendService {
 
   constructor() { }
 
-  executeScoreCalculations(y:string, m:string, d:string){
+  //Quality Assurance Axios Calls
+  
+  executeScorePriceCalculations(y:string, m:string, d:string){
     let date = this.generateJSON(y,m,d)
 
     return axios.post("http://127.0.0.1:5000/records", date)
   }
+
+  executeAudioTransformationScoreCalculation(){
+    return axios.get("http:://127.0.0.1:5000/records")
+  }
+
+  fetchScores(){
+    return axios.get("http:://127.0.0.1:5000/scoreFetch")
+  }
+  // Pattern Search / Gestiones de pagos Axios Calls
   executePatternPriceSearch(y:string, m:string, d:string){
     let date = this.generateJSON(y,m,d);
 

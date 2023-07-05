@@ -156,8 +156,8 @@ class QualityAssurance(ApplicationProcess):
 
             recording = PostgreController.get_recording(wav_model.name)
             data = {"r_id": recording[0].id}
-            return encouraged.handle(EncouragedSentenceModel(proxy_response, wav_model.cedente), data)
-
+            encouraged.handle(EncouragedSentenceModel(proxy_response, wav_model.cedente), data)
+        return True
     @staticmethod
     def await_test(request_values):
         date = dict()
