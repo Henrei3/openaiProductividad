@@ -1,0 +1,10 @@
+<div id="popUp" class = "popUp">
+    <div class="curve"></div>
+    <div class="info">
+        <p> {{data.message}} </p>
+        <div>
+            <button mat-button [mat-dialog-close]="data.ok_button">{{data.ok_button}}</button> 
+          <button mat-button (click)="clickNoButton()"> {{data.no_button}}</button>
+        </div>
+    </div>
+</div>

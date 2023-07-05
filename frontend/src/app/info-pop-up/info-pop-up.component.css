@@ -1,0 +1,71 @@
+.popUp{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    height: 50vh;
+    width: 30vh;
+    background-image: linear-gradient(to left, #FFA033 0%,#FFA033 50%,#1DA6F0 50%, #1DA6F0 100%);
+}
+p{
+    color: white;
+    width: 70%;
+}
+button{
+    background-color: white;
+    border-radius: 0.2em;
+    border: none;
+    height: 3rem;
+    min-width: 3rem;
+    font-size: 25px;
+    transition: all 0.2s linear;
+}
+button:hover{
+    background-color: black;
+    color: white;
+}
+div > div {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+}
+
+.info{
+    position: absolute;
+    height: 100%;
+    top: 0rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    z-index: +1;
+}
+
+.curve{
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+}
+.curve::before{
+    content: '';
+    display: block;
+    position: absolute;
+    border-radius: 100% 40%;
+    width: 30%;
+    height: 56%;
+    background-color: #FFA033 ;
+    transform: translate(20%,78.5%);
+    z-index: +1;
+}
+.curve::after{
+    content: '';
+    display: block;
+    position: absolute;
+    border-radius: 100% 50%;
+    width: 30%;
+    height: 56%;
+    background-color: #1DA6F0;
+    transform: translate(-15%,0%);
+    
+}

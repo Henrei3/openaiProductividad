@@ -1,0 +1,13 @@
+.loading {
+    visibility: visible;
+    opacity: 1;
+    height: auto;
+    position: absolute;
+    background-color: rgba(102, 163, 177, 0);
+}
+h3{
+    text-align: center;
+    margin-top: 5px;
+    font-family: 'Pacifico regular';
+    font-size: 30px;
+}
