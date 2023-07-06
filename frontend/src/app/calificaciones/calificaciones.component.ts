@@ -7,8 +7,9 @@ import {MatButtonModule} from '@angular/material/button';
 import {FormsModule} from '@angular/forms';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
-import { CommonModule, NgIf } from '@angular/common';
+import { CommonModule, NgClass, NgFor, NgForOf, NgIf } from '@angular/common';
 import { Subscription, map } from 'rxjs';
+import { NO_ERRORS_SCHEMA } from '@angular/compiler';
 
 export interface scoreData{
   name:string;
@@ -16,19 +17,13 @@ export interface scoreData{
   tickets:any;
   audio:string;
 }
+
 export interface totalData{
   total:string;
 }
 
 export interface ticketData{
-  cedente?:string;
-  cierre?:string;
-  convenio?:string;
-  grabacion?:string;
-  identificacion?:string;
-  motivo?:string;
-  objecciones?:string;
-  saludo?:string;
+  tickets: Array<string>
 }
 
 export interface audioData{
@@ -41,11 +36,7 @@ export interface audioData{
   styleUrls: ['./calificaciones.component.css']
 })
 export class CalificacionesComponent{
-  name?: number;
-  tickets?: string[] | any;
-  audio ?: string;
-  total ?:number;
-
+  
   constructor(
     private data_service:DataService,
     private route: Router, 
@@ -59,18 +50,29 @@ export class CalificacionesComponent{
   }
   showTotal(){
     this.popUpCreator.open(TotalOverviewComponent,{
-      data:{total:this.total}
+      data:{total:this.data.total},
+      disableClose:false
     })
   }
   showTickets(){
+    
+    var ticket_list = Object.keys(this.data.tickets)
+    var data_content = new Array<string>;
+    for (let i = 0; i < ticket_list.length; i++){
+      let actual_ticket = ticket_list[i];
+      data_content.push(actual_ticket + ' :' + this.data.tickets[actual_ticket])
+    }
+    
     this.popUpCreator.open(TicketOverviewComponent, {
-      data:{cedente:'Test'}
+      data:{tickets: data_content},
+      disableClose: false
     })
   }
 
   showAudio(){
     this.popUpCreator.open(AudioOverviewComponent, {
-      data:{audio_text:this.audio}
+      data:{audio_text: this.data.audio},
+      disableClose:false
     })
   }
 }
@@ -80,7 +82,7 @@ export class CalificacionesComponent{
   templateUrl:'total_overview.html',
   styleUrls: ['overview.components.css'],
   standalone: true,
-  imports: [MatDialogModule, MatFormFieldModule, MatInputModule, FormsModule, MatButtonModule, NgIf,CommonModule],
+  imports: [MatDialogModule, MatFormFieldModule, MatInputModule, FormsModule, MatButtonModule, NgFor,CommonModule],
 })
 export class TotalOverviewComponent {
   constructor(public dialogRef:MatDialogRef<TotalOverviewComponent>,
@@ -92,7 +94,9 @@ export class TotalOverviewComponent {
   templateUrl:'ticket_overview.html',
   styleUrls: ['overview.components.css'],
   standalone: true,
-  imports: [MatDialogModule, MatFormFieldModule, MatInputModule, FormsModule, MatButtonModule, NgIf, CommonModule],
+  imports: [MatDialogModule, MatFormFieldModule, MatInputModule, 
+    FormsModule, MatButtonModule, CommonModule, NgForOf,NgFor,NgClass],
+    
 })
 export class TicketOverviewComponent{
   constructor(public dialogRef:MatDialogRef<TicketOverviewComponent>,
@@ -104,7 +108,7 @@ export class TicketOverviewComponent{
   templateUrl:'audio_overview.html',
   styleUrls: ['overview.components.css'],
   standalone: true,
-  imports: [MatDialogModule, MatFormFieldModule, MatInputModule, FormsModule, MatButtonModule,NgIf, CommonModule],
+  imports: [MatDialogModule, MatFormFieldModule, MatInputModule, FormsModule, MatButtonModule,NgFor, CommonModule],
 })
 export class AudioOverviewComponent{
   constructor(public dialogRef:MatDialogRef<AudioOverviewComponent>,

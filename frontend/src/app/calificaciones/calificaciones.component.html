@@ -1,21 +1,23 @@
-<h2 (click)="return()" >Calificaciones</h2>
+<section class="calificacion">
+    <h2 (click)="return()" >Calificaciones</h2>
 
-<section>
-<span><div> {{name}} </div></span>
+    <section>
+    <span><div> {{data.name}} </div></span>
 
-<div>
+    <div>
 
-    <a (click)="showTotal()">
-        Total 
+        <a (click)="showTotal()">
+            Total 
+        </a>
+
+        <a (click)="showTickets()">
+            Etiquetas
+        </a>
+
+        <a (click)="showAudio()">
+            Audio
     </a>
 
-    <a (click)="showTickets()">
-        Etiquetas
-    </a>
-
-    <a (click)="showAudio()">
-        Audio
-   </a>
-
-</div>
+    </div>
+    </section>
 </section>

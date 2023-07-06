@@ -3,28 +3,7 @@
         Etiquetas :
     </h2> 
 
-    <div class="tickets" *ngIf="data.cedente != undefined">
-        CEDENTE : {{data.cedente}}
-    </div>
-    <div *ngIf="data.cierre">
-        CIERRE : {{data.cierre}}
-    </div>
-    <div *ngIf="data.convenio">
-        CONVENIO : {{data.convenio}}
-    </div>
-    <div *ngIf="data.grabacion">
-        GRABACION : {{data.grabacion}}
-    </div>
-    <div *ngIf="data.identificacion">
-        IDENTIFICACION : {{data.identificacion}}
-    </div>
-    <div *ngIf="data.motivo">
-        MOTIVO : {{data.motivo}}
-    </div>
-    <div *ngIf="data.objecciones">
-        OBJECCIONES : {{data.objecciones}}
-    </div>
-    <div *ngIf="data.saludo">
-        SALUDO : {{data.saludo}}
+    <div *ngFor="let ticket of data.tickets">    
+        {{ticket}}
     </div>
 </section>

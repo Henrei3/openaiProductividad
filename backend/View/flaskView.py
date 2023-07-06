@@ -65,7 +65,7 @@ def get_recordings():
 
     function_status = QualityAssurance.audio_transformation_score_calculation()
     if function_status:
-        return 'El calculo de las grabacioness ha sido efectuado'
+        return 'El calculo de las grabaciones ha sido efectuado'
     return 'El calculo de las grabaciones no se ha podido efectuar'
 
 

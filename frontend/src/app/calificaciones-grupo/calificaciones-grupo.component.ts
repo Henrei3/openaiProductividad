@@ -33,7 +33,7 @@ export class CalificacionesGrupoComponent implements OnInit{
     for (let i = 0; i < dateSelector.length; i++){
    
       dateSelector[i].addEventListener("keyup", (e)=>{ 
-      console.log("Date Selector Value : "+dateSelector[i].value)
+      
       if(values[i] <= dateSelector[i].value.length && e.key != "ArrowRight" ){
         if (i != dateSelector.length-1 && e.key!="ArrowLeft") dateSelector[i+1].select(); 
       }
@@ -45,9 +45,6 @@ export class CalificacionesGrupoComponent implements OnInit{
         let y:string = dateSelector[0].value;
         let m:string = dateSelector[1].value;
         let d:string = dateSelector[2].value;
-        for (let i = 0; i < dateSelector.length;i++){
-          dateSelector[i].value = '';
-        }
         this.getScoresPrice(y,m,d);
       }
       })
@@ -104,29 +101,32 @@ export class CalificacionesGrupoComponent implements OnInit{
 
   fetchScores(){
     this.scoreCalculs.fetchScores()
-    .then((response)=>{    
-      let score_fetch = response.data
-      let scores = score_fetch[0]
-      console.log(scores)
+    .then((response)=>{
+      let score_fetch = response.data;
+      let scores = score_fetch[0];
       
       if(score_fetch[1]){
-      let variable = Object.keys(scores)
+      let variable = Object.keys(scores);
       
-      for (let i=0; i < variable.length; i++){
-        let name: string = variable[i]  
-        
-        let recording_info:Array<string> = scores[name]
-        
-        let score = new Score(name, recording_info[0],recording_info[1])
-        
-        console.log(score)
+        for (let i=0; i < variable.length; i++){
+          let name: string = variable[i];  
+          
+          let recording_info:Array<string> = scores[name];
+          
+          let score = new Score(name, recording_info[0],recording_info[1]);
 
-        this.scores.push(score)}
+          this.scores.push(score);
+        }
+
+        var no_data = document.getElementsByClassName('no-data');
+        no_data[0].classList.add('data')
+
       }
       else{
+
         this.popUpCreator.open(InfoOneButtonComponent, {
           data:{message:score_fetch[0], button_text:'Ok'}
-        })
+        });
       }
     })
     .catch((error_message)=>{
@@ -139,13 +139,15 @@ export class CalificacionesGrupoComponent implements OnInit{
 
   showScore(name:string | undefined){
     for(let i=0; i<this.scores.length; i++){
-      
-      if(this.scores[i].name == name) {
-        
-        this.popUpCreator.open(CalificacionesComponent, {data:{
-          name:''
-        }})
-      
+      var score_name = this.scores[i].name
+      if(score_name == name) {
+        var total_value = this.scores[i].score['total']
+        var tickets_value = this.scores[i].score['ticket_score']
+        var audio_text = this.scores[i].audio_text
+        this.popUpCreator.open(CalificacionesComponent, {
+          data:{ name: score_name, total:total_value, tickets:tickets_value, audio:audio_text },
+          disableClose:false 
+        })
       }
     }
     

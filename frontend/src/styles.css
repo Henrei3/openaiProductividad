@@ -30,11 +30,7 @@ app-home{
     align-items: center;
     height: 100%;
 }
-app-calificaciones{
-    display: flex;
-    flex-direction: column;
-    height: 70%;
-}
+
 
 header{
     display: flex;
@@ -68,7 +64,7 @@ p{
 
 a:hover{
     background-color: #036ba3;
-    font-size:22px;
+    font-size:20px;
 }
 
 a:hover:nth-child(even){

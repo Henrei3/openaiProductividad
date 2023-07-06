@@ -1,7 +1,7 @@
 export class Score {
   constructor(
-        public name ? : string,
-        public score? : string,
-        public audio_text ?: string
+        public name : string,
+        public score: any,
+        public audio_text: string
     ) {}
 }
