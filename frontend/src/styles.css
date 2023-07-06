@@ -3,11 +3,18 @@
     font-family: 'Pacifico regular';
     src: url(./assets/fonts/Pacifico-Regular.ttf);
 }
+@font-face {
+    font-family: 'Caprasimo Regular';
+    src: url(./assets/fonts/Caprasimo-Regular.ttf);
+}
+@font-face {
+    font-family: 'Umbounded Semi-Bold';
+    src: url(./assets/fonts/Unbounded-SemiBold.ttf);
+}
 
 html, body { height: 100%; }
 
 body{
-    height: 97vh;
     margin: 0; 
     font-family: Roboto, "Helvetica Neue", sans-serif;
 }
@@ -22,6 +29,11 @@ app-home{
     justify-content: space-around;
     align-items: center;
     height: 100%;
+}
+app-calificaciones{
+    display: flex;
+    flex-direction: column;
+    height: 70%;
 }
 
 header{

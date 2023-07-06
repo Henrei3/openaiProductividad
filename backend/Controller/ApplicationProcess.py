@@ -125,7 +125,8 @@ class QualityAssurance(ApplicationProcess):
 
     @staticmethod
     def setup_application(y: str, m: str, d: str):
-
+        date_for_storage = {"y": y, "m": m, "d": d}
+        JsonFileCreator.write(date_for_storage, "../analysed_records/date.json")
         sql_server_model = SQLSERVERDBModel()
         subprocess.call(r"C:\Users\hjimenez\Desktop\Backup\backend\openRepo.bat")
         return sql_server_model.get_all_recordings_given_date(y, m, d)
@@ -172,3 +173,6 @@ class QualityAssurance(ApplicationProcess):
             score: Scores = score_row[0]
             processed_view[score.s_id] = score.score
         return processed_view
+
+
+QualityAssurance.audio_transformation_score_calculation()

@@ -15,6 +15,8 @@ import { LoadingPopUpComponent } from './loading-pop-up/loading-pop-up.component
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import 'zone.js';
 import { InfoPopUpComponent } from './info-pop-up/info-pop-up.component';
+import { InfoOneButtonComponent } from './info-one-button/info-one-button.component';
+import { RouterModule } from '@angular/router';
 @NgModule({
   declarations: [
     AppComponent,
@@ -24,7 +26,8 @@ import { InfoPopUpComponent } from './info-pop-up/info-pop-up.component';
     WorkInProgressComponent,
     PatronesGrupoComponent,
     LoadingPopUpComponent,
-    InfoPopUpComponent
+    InfoPopUpComponent,
+    InfoOneButtonComponent
   ],
   imports: [
     BrowserModule,

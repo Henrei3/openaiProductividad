@@ -16,11 +16,11 @@ export class BackendService {
   }
 
   executeAudioTransformationScoreCalculation(){
-    return axios.get("http:://127.0.0.1:5000/records")
+    return axios.get("http://127.0.0.1:5000/records")
   }
 
   fetchScores(){
-    return axios.get("http:://127.0.0.1:5000/scoreFetch")
+    return axios.get("http://127.0.0.1:5000/scoresFetch")
   }
   // Pattern Search / Gestiones de pagos Axios Calls
   executePatternPriceSearch(y:string, m:string, d:string){

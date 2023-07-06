@@ -1,0 +1,16 @@
+section {
+    width: 50vw;
+    height: 70vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    font-family: 'Roboto';
+    font-size: xx-large;
+}
+h2{
+    text-align: center;
+    height: 10%;
+    width: 40%;
+    background-color: rgba(158, 151, 151, 0.623);
+}

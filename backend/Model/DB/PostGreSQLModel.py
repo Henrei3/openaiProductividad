@@ -51,7 +51,7 @@ class PostGre:
         return score
 
     def get_scores_given_date(self, y: str, m: str, d: str):
-        query = select(Scores, Recording.name).join(Recording).filter(Recording.name.like(f'%{y}{m}{d}%'))
+        query = select(Scores, Recording.name, Recording.audio_text).join(Recording).filter(Recording.name.like(f'%{y}{m}{d}%'))
         return self.session.execute(query)
 
     def get_score(self, s_id):

@@ -1,5 +1,5 @@
 h2{
-    padding: 0em 2em;
+    padding: 0em 7.5rem;
     color: #1da6f0;
     text-decoration: underline #2C4D58;
 }
@@ -7,23 +7,32 @@ h2{
 div{
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: center;
 }
 
 div a{
+    font-family: 'Umbounded Semi-Bold';
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100px;
-    width: 160px;
+    height: 160px;
+    width: 240px;
     background-color: #ffa033;
     color: white;
-    font-size: x-large;
-    transition: all 0.5s;
+    font-size: 3rem;
+    margin: 5px;
+    transition: all 0.4s;
+}
+div a:nth-child(even){
+    font-size: 2rem;
 }
 
 div a:hover{
-font-size: 2rem;
+    background-color: #F28C19;
+    font-size: 3.5rem;
+}
+div a:nth-child(even):hover{
+    font-size: 2.43rem;
 }
 
 .calificaciones{
@@ -50,7 +59,7 @@ span{
 }
 span div {
     display: flex;
-    width: 30rem;
+    width: 35rem;
     height: 3rem;
     background-color: #ffa033;
     justify-content: center;
@@ -62,8 +71,10 @@ span div {
 }
 
 #information{
-    
-    height: 75%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 20vh;
     width: 75%;
     border-width: 1em;
     background-color: #1da6f0;
@@ -73,11 +84,14 @@ span div {
 }
 
 #information div{
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    display: flex;
     
+    justify-content: center;
+    align-items: center;
+    font-family: 'Caprasimo Regular';
+    font-size: larger;
     margin-top: 4vw;
+    margin-bottom: 4vh;
     width: 85%;
     background-color: white;
-
-    
 }

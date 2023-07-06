@@ -1,6 +1,7 @@
 export class Score {
   constructor(
-        public s_id ? : String,
-        public score? : String
+        public name ? : string,
+        public score? : string,
+        public audio_text ?: string
     ) {}
 }

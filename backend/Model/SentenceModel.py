@@ -29,7 +29,6 @@ class SentenceModel:
 
         json = jsonfinder.find(self.name)
         if json != -1:
-            print(json["ticket_score"])
             return json["total"], json["ticket_score"]
         return 0, list()
 
@@ -42,7 +41,6 @@ class EncouragedSentenceModel(SentenceModel):
         SentenceModel.__init__(self, sentence)
         self.controller = SQLServerController()
         sentences = self.controller.get_positive_sentences_from_cedente(cedente)
-        print(sentences)
         for data in sentences:
             self.encouraged.append(
                 {data[2]: [data[3], data[4], data[5]], "PUNTAJE": data[6]}

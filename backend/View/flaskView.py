@@ -30,28 +30,34 @@ def add_recording():
             score: Scores = scores_row[0]
             print('FlaskView : addRecording -> Found score id: ', score.s_id, 'Score score: ', score.score)
         if row_count >= 10:
-            return 'El calculo de calificacion para esta fecha ya ha sido efectuado'
+            return ['El calculo de calificacion para esta fecha ya ha sido efectuado', False]
         else:
             audio_calculation_price = QualityAssurance.audio_price_evaluation(year, month, day)
             print(audio_calculation_price)
-            return 'La transformación de Audios a Texto costará : ' + str(audio_calculation_price) + ' USD. '
+            return ['La transformación de Audios a Texto costará : ' + str(audio_calculation_price) + ' USD. ', True]
 
 
 @app.route('/scoresFetch', methods=['GET'])
 def get_calculated_scores_set_date():
     json_finder = JSONFinder('../analysed_records/')
     date = json_finder.find('date.json')
-
+    print(date['y'], date['m'], date['d'])
     chunked_iterator_results = PostgreController.get_scores_given_date(date['y'], date['m'], date['d'])
-    row_count = 0
+
     scores = dict()
+    print(chunked_iterator_results)
     for row_result in chunked_iterator_results:
+        print("Test")
         score: Scores = row_result[0]
-        scores[row_result[1]] = score.score
+        name = row_result[1]
+        audio_text = row_result[2]
+        scores[name] = [score.score, audio_text]
         print("FlaskView -> Get Calculated Scores Set Date Score.id = ", score.s_id,
               " Score.score = ", score.score)
-    if row_count > 0:
-        return scores
+    print("Scores : ", scores)
+    if len(scores) > 0:
+        return [scores, True]
+    return ['No Scores To See', False]
 
 
 @app.route('/records', methods=["GET"])
@@ -82,11 +88,11 @@ def calculate_pattern_price():
             print("Id : ", embedding.e_id, "Embedding",  embedding.embedding)
             row_count += 1
         if row_count >= 1:
-            return 'El calculo de los patrones para esta fecha ya ha sido efectuado'
+            return ["El calculo de los patrones para esta fecha ya ha sido efectuado", True]
 
     result = str(GestionesDePago.audio_price_evaluation(date['year'], date['month'], date['day']))
     print(result)
-    return 'El precio de la transformacion a texto de estos audios costara ' + result + ' USD.'
+    return ['El precio de la transformacion a texto de estos audios costara ' + result + ' USD.', False]
 
 
 @app.route('/audioTranformationEmbeddingsCalculation', methods=['GET'])

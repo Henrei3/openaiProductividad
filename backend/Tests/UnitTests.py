@@ -213,8 +213,15 @@ class PostGreControllerUnitTest(unittest.TestCase):
                     name = row_result[1]
                     self.assertEqual(type(name), str)
             except IndexError:
-                self.fail("The function didn't wortk as expected")
+                self.fail("The function didn't work as expected")
 
+    def test_get_scores_when_given_date(self):
+        chunked_iterator_results = PostgreController.get_scores_given_date('2023', '05', '19')
+        for row_results in chunked_iterator_results:
+            print(row_results[0], row_results[1], row_results[2])
+            self.assertIsNotNone(row_results[0])
+            self.assertIsNotNone(row_results[1])
+            self.assertIsNotNone(row_results[2])
 
 class PostGreSQLModelTesting(unittest.TestCase):
 
