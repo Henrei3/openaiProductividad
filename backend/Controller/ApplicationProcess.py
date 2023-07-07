@@ -174,5 +174,3 @@ class QualityAssurance(ApplicationProcess):
             processed_view[score.s_id] = score.score
         return processed_view
 
-
-QualityAssurance.audio_transformation_score_calculation()

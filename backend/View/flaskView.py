@@ -69,7 +69,6 @@ def get_recordings():
     return 'El calculo de las grabaciones no se ha podido efectuar'
 
 
-
 @app.route('/patternPrice', methods=['POST'])
 def calculate_pattern_price():
     date = dict()

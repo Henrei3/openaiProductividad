@@ -1,5 +1,4 @@
 from __future__ import annotations
-
 from backend.Model.RecordingModel import RecordingModel
 from backend.Model.jsonCreator import JsonFileCreator
 from backend.Controller.pathFinder import JSONFinder

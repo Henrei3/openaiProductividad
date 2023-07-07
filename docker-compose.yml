@@ -2,10 +2,13 @@ services:
   frontend:
     image: frontend/angle
     build: ./frontend
+    ports:
+      - 8080:80
   backend:
     image: backend/python_program
     build: ./backend
-
+    ports:
+      - 5000:5000
   postgresdb:
       image: postgres
       restart: always

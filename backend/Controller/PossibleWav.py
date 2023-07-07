@@ -1,5 +1,4 @@
 from typing import List
-
 from backend.Controller.pathFinder import WavFinder
 from backend.Model.wavmodel import WavModel
 import os

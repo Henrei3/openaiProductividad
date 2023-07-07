@@ -1,20 +1,16 @@
 from backend.Controller.CalculoPrecios import AudioPriceCalculation, Currency, EmbeddingsPriceCalculation
 from backend.Controller.SentenceController import EncouragedSentencesController, ProhibitedSentencesController
 from backend.Model.SentenceModel import EncouragedSentenceModel, ProhibitedPhrasesModel
-from backend.Model.DB.PostGreSQLModel import PostGre, Recording, Scores, Embedding, Base
+from backend.Model.DB.PostGreSQLModel import PostGre, Recording, Embedding, Base
 from backend.Model.RequestModel import EmbeddingRequestModel, AudioGPTRequestModel, RecordingModel
 from backend.Controller.GPTCreator import OpenAIProxyAudio, OpenAIProxyEmbeddings
 from backend.Controller.PostGreSQLController import PostgreController
 from backend.Controller.SQLServerController import SQLSERVERDBModel, SQLServerController
 from backend.Controller.PossibleWav import PossibleWav
 from backend.Controller.pathFinder import WavFinder
-from pydub import AudioSegment
-from decouple import config
-from unittest.mock import Mock
 import subprocess
 import sqlalchemy
 import unittest
-import openai
 import os
 
 
