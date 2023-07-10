@@ -19,6 +19,9 @@ class PostGre:
         request = self.session.query(Recording).filter(Recording.name.like(f"{name}"))
         return self.session.execute(request)
 
+    def get_recording_given_id(self, r_id: str):
+        request = self.session.query(Recording).where(Recording.id == r_id)
+        return self.session.execute(request)
     def update_recording_audio_text(self, recording_id: str, audio_text: dict):
         self.session.query(Recording).filter(Recording.id == recording_id).update(
             {Recording.audio_text: audio_text}, synchronize_session='auto'

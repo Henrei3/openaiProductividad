@@ -3,7 +3,7 @@ services:
     image: frontend/angle
     build: ./frontend
     ports:
-      - 8080:80
+      - 8080:4200
   backend:
     image: backend/python_program
     build: ./backend

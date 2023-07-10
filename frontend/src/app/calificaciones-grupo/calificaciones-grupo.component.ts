@@ -11,7 +11,7 @@ import { LoadingPopUpComponent } from '../loading-pop-up/loading-pop-up.componen
 import { InfoPopUpComponent } from '../info-pop-up/info-pop-up.component';
 import { InfoOneButtonComponent } from '../info-one-button/info-one-button.component';
 import { CalificacionesComponent } from '../calificaciones/calificaciones.component';
-import { data } from 'jquery';
+
 
 @Component({
   selector: 'app-calificaciones-grupo',
@@ -31,11 +31,11 @@ export class CalificacionesGrupoComponent implements OnInit{
     let values:number[] = [4,2,2];
 
     for (let i = 0; i < dateSelector.length; i++){
-   
-      dateSelector[i].addEventListener("keyup", (e)=>{ 
-      
+
+      dateSelector[i].addEventListener("keyup", (e)=>{
+
       if(values[i] <= dateSelector[i].value.length && e.key != "ArrowRight" ){
-        if (i != dateSelector.length-1 && e.key!="ArrowLeft") dateSelector[i+1].select(); 
+        if (i != dateSelector.length-1 && e.key!="ArrowLeft") dateSelector[i+1].select();
       }
       if(dateSelector[i].value.length <=  0 && e.key == "Backspace"){
         if(i -1 >= 0){dateSelector[i-1].select()}
@@ -104,15 +104,15 @@ export class CalificacionesGrupoComponent implements OnInit{
     .then((response)=>{
       let score_fetch = response.data;
       let scores = score_fetch[0];
-      
+
       if(score_fetch[1]){
       let variable = Object.keys(scores);
-      
+
         for (let i=0; i < variable.length; i++){
-          let name: string = variable[i];  
-          
+          let name: string = variable[i];
+
           let recording_info:Array<string> = scores[name];
-          
+
           let score = new Score(name, recording_info[0],recording_info[1]);
 
           this.scores.push(score);
@@ -146,11 +146,11 @@ export class CalificacionesGrupoComponent implements OnInit{
         var audio_text = this.scores[i].audio_text
         this.popUpCreator.open(CalificacionesComponent, {
           data:{ name: score_name, total:total_value, tickets:tickets_value, audio:audio_text },
-          disableClose:false 
+          disableClose:false
         })
       }
     }
-    
+
   }
 
 }

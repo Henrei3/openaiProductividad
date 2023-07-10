@@ -8,18 +8,8 @@ class PostgreController:
     @classmethod
     def add_recording(cls, gestion_id: str, name: str, audio_text: dict = None) -> Recording:
         postgre = PostGre()
-        phone_location = name.find('09')
-        temp_cell = ""
-        if phone_location == -1:
-            new_phone_location = name.find('9')
-            if new_phone_location != -1:
-                for i in range(0, 9):
-                    if name[new_phone_location+i].isdigit():
-                        temp_cell += name[new_phone_location+i]
-        else:
-            for i in range(0, 10):
-                if name[phone_location+i].isdigit():
-                    temp_cell += name[phone_location+i]
+
+        temp_cell = cls.find_cellphone_in_recording_format(name)
 
         if len(temp_cell) >= 9:
             cellphone = temp_cell
@@ -28,9 +18,39 @@ class PostgreController:
         return postgre.add_recording(gestion_id, audio_text, cellphone, name)
 
     @staticmethod
+    def find_cellphone(name: str) -> str:
+        phone_location = name.find('09')
+        temp_cell = ""
+        if phone_location == -1:
+            new_phone_location = name.find('9')
+            if new_phone_location != -1:
+                if len(name) - 9 >= new_phone_location:
+                    for i in range(0, 9):
+                        if name[new_phone_location + i].isdigit():
+                            temp_cell += name[new_phone_location + i]
+        else:
+            if len(name) - 10 >= phone_location:
+                for i in range(0, 10):
+
+                    if name[phone_location + i].isdigit():
+                        temp_cell += name[phone_location + i]
+
+        return temp_cell
+
+    @staticmethod
+    def find_cellphone_in_recording_format(name: str):
+        segmented_name = name.split('-')
+        return segmented_name[1]
+
+    @staticmethod
     def get_recording(name: str) -> Recording:
         postgre = PostGre()
         return postgre.get_recording_given_name(name).first()
+
+    @staticmethod
+    def get_recording_given_id(r_id):
+        postgre = PostGre()
+        return postgre.get_recording_given_id(r_id).first()
 
     @staticmethod
     def get_recordings_given_date(y: str, m: str, d: str):

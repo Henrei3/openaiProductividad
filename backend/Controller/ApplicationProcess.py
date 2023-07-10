@@ -3,7 +3,7 @@ from backend.Model.SentenceModel import EncouragedSentenceModel, ProhibitedPhras
 from backend.Model.RecordingModel import RecordingModel
 from backend.Model.RequestModel import AudioGPTRequestModel
 from backend.Model.RequestModel import EmbeddingRequestModel
-from backend.Model.DB.SQLServerModel import SQLSERVERDBModel
+from backend.Controller.SQLServerController import SQLSERVERDBModel, SQLServerController
 from backend.Model.DB.recordingsDB import Recording, Scores
 from backend.Model.jsonCreator import JsonFileCreator
 from backend.Controller.PostGreSQLController import PostgreController
@@ -81,7 +81,7 @@ class GestionesDePago(ApplicationProcess):
          It returns the price of turning these recordings into embeddings"""
 
         prompt = "Cliente-Alo ? Agente-Buenos Dias..."
-        json_finder = JSONFinder("../analysed_records")
+        json_finder = JSONFinder("../analysed_records/")
         wavs_data = json_finder.find("wav_data")
         subprocess.call(r"C:\Users\hjimenez\Desktop\Backup\backend\openRepo.bat")
 
@@ -158,6 +158,7 @@ class QualityAssurance(ApplicationProcess):
             recording = PostgreController.get_recording(wav_model.name)
             data = {"r_id": recording[0].id}
             encouraged.handle(EncouragedSentenceModel(proxy_response, wav_model.cedente), data)
+
         return True
     @staticmethod
     def await_test(request_values):

@@ -1,11 +1,11 @@
 FROM node:latest as node
 WORKDIR /app
 
+COPY package.json package-lock.json ./
+RUN npm install @angular/cli
+
+
 COPY . .
-RUN npm install
-RUN npm run build --prod
 
-
-FROM httpd:latest
-COPY --from=node /app/dist/frontend /usr/local/apache2/htdocs
-EXPOSE 80
+EXPOSE 4200
+CMD ["ng","serve","--host","0.0.0.0"]

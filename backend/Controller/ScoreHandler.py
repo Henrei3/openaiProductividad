@@ -1,6 +1,7 @@
 from __future__ import annotations
 from backend.Controller.SentenceController import EncouragedSentencesController, ProhibitedSentencesController
 from backend.Controller.SentenceController import EncouragedSentenceModel, ProhibitedPhrasesModel
+from backend.Controller.SQLServerController import SQLServerController
 from backend.Controller.PostGreSQLController import PostgreController
 from backend.Model.DB.recordingsDB import Recording, Scores
 from abc import ABC, abstractmethod
@@ -89,5 +90,22 @@ class DatabaseStoringScoreHandler(AbstractScoreHandler):
 
     def handle(self, request: Scores, data: dict) -> Scores:
         score = PostgreController.add_scores(request)
-        print("Chain of Responsibility: Database Storing -> Successfully added score")
+
+        # Tomar recording con
+        recording: Recording = PostgreController.get_recording_given_id(request.s_id)[0]
+
+        # Informacion necesaria para integracion en la base de datos
+        # gestion id , nombre, numero (se saca del nombre), fecha (se saca del nombre) , audio_text, total, ticket score
+
+        print("Recording : ", recording)
+
+        g_id = recording.g_id
+        name = recording.name
+        audio_text = recording.audio_text
+        print(name)
+        sql_server_controller = SQLServerController()
+        sql_server_controller.add_grabaciones(g_id, name, audio_text)
+        sql_server_controller.add_calificaciones(name, score.score)
+
+        print("Chain of Responsibility: PostGre Database Storing -> Successfully added score")
         return score

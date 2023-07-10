@@ -5,6 +5,7 @@ import { Data } from '@angular/router';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog'
 import { LoadingPopUpComponent } from '../loading-pop-up/loading-pop-up.component';
 import { InfoPopUpComponent } from '../info-pop-up/info-pop-up.component';
+import { InfoOneButtonComponent } from '../info-one-button/info-one-button.component';
 
 @Component({
   selector: 'app-patrones-grupo',
@@ -61,27 +62,6 @@ export class PatronesGrupoComponent implements OnInit{
         })
       }
   }
-  
-  appear(id:string, class_to_add:string){
-    let popup = document.getElementById(id);
-    if(popup){
-      popup.classList.add(class_to_add)  
-    }
-  }
-  
-  hide(id:string, class_to_remove:string){
-    let popup = document.getElementById(id);
-    if(popup){
-      popup.classList.remove(class_to_remove)  
-      this.message = undefined
-    }
-  }
-
-  show_result(hide_id:string, hide_class:string, message:string, button_yes_message:string, appear_id:string, appear_class:string){
-    this.message = message
-    this.popUp_button_message['si'] = button_yes_message
-    this.appear(appear_id, appear_class)
-  }
 
   getPatternPrice(y:string, m:string, d:string){
     this.popUpCreator.open(LoadingPopUpComponent, this.dialogConfig)
@@ -90,16 +70,25 @@ export class PatronesGrupoComponent implements OnInit{
       (response)=>{
         this.popUpCreator.closeAll()
         let audio_calculation_response = response.data
-        const infoPopUpRef = this.popUpCreator.open(InfoPopUpComponent, {
-          data:{message: audio_calculation_response, ok_button: 'Transformar', no_button:'Cancel'}
-        })
-        infoPopUpRef.afterClosed().subscribe(
-          (ok_button_text) => {
-            if (ok_button_text == 'Transformar'){
-              this.getEmbeddingPriceCalculateAudios()
+        console.log("get Pattern Price : " + audio_calculation_response)
+        if(!audio_calculation_response[1])
+        {
+          const infoPopUpRef = this.popUpCreator.open(InfoPopUpComponent, {
+            data:{message: audio_calculation_response[0], ok_button: 'Transformar', no_button:'Cancel'}
+          })
+          infoPopUpRef.afterClosed().subscribe(
+            (ok_button_text) => {
+              if (ok_button_text == 'Transformar'){
+                this.getEmbeddingPriceCalculateAudios()
+              }
             }
-          }
-        )
+          )
+        }
+        else {
+          this.popUpCreator.open(InfoOneButtonComponent, {
+            data:{ message:audio_calculation_response[0], button_text:'Ok'}
+          })
+        }
       }
     ).catch(
       (error_message)=> {
@@ -116,6 +105,8 @@ export class PatronesGrupoComponent implements OnInit{
       (response)=>{
         this.popUpCreator.closeAll()
         let embedding_response = response.data
+        console.log("EmbeddingPriceCalculation : " + embedding_response)
+
         const inforPopUpRef = this.popUpCreator.open(InfoPopUpComponent, {
           data:{message: embedding_response, ok_button: 'Generate', no_button:'Cancel'}
         })
@@ -125,7 +116,7 @@ export class PatronesGrupoComponent implements OnInit{
             this.calculateEmbeddings()
           }
         })
-
+        
       }).catch((error_messsage)=>{
         this.popUpCreator.closeAll()
         this.popUpCreator.open(InfoPopUpComponent, {
@@ -144,7 +135,9 @@ export class PatronesGrupoComponent implements OnInit{
       })
       inforPopUpRef.afterClosed().subscribe((ok_button_text)=>{
         if (ok_button_text){
-          console.log("work In progress ...")
+          this.popUpCreator.open(InfoOneButtonComponent, {
+            data:{ message:" Work In progress", button_text:'Ok'}
+          })
         }
       })
     }).catch((error_message)=>{

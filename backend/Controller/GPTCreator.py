@@ -85,7 +85,10 @@ class OpenAIAudioRequest:
 
     @classmethod
     def execute_request(cls, gpt_model: AudioGPTRequestModel) -> str:
-
+        """
+        This method will check if the audio_size doesn't exceed 24 m since the OpenAPI can transform audios up to 25 mb.
+        If the audio exceeds 25 mb, we will split it in two and pass it throw the api.
+        """
         audio_path: str
         # We segment the audio in case it is too big for the API to process
         if gpt_model.size >= 24:
@@ -118,6 +121,9 @@ class OpenAIAudioRequest:
         print(response)
         return response["text"]
 
+    @classmethod
+    def diarize(cls, audio_path):
+        pass
     @staticmethod
     def calculate_price(gpt_request: AudioGPTRequestModel):
         return AudioPriceCalculation.audio_request_price_calculation(gpt_request, Currency.AudioPricing.USD)
